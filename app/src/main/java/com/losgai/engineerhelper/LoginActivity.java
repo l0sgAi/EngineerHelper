@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // 初始化数据库
         engineerInfoDao = new EngineerInfoDao(this);
-        engineerInfoDao.open();
+        engineerInfoDao.open(); // 这里已经创建了数据库，后面的dao只要建表即可
 
         // 获取SharedPreferences对象
         SharedPreferences sharedPreferences = getSharedPreferences("ENGINEERHELPER_saved_account", MODE_PRIVATE);
@@ -43,29 +43,26 @@ public class LoginActivity extends AppCompatActivity {
 
         Switch isSave = findViewById(R.id.saveAccount); // 是否记住用户名/密码按钮
 
-        if (sharedPreferences.contains("cur_username")) { // 判断是否有保存的用户名/密码，有则填入
-            // 有保存的用户名/密码
+        // 填入保存的用户名/密码
+        if(sharedPreferences.contains("cur_username")){
             usernameEditText.setText(sharedPreferences.getString("cur_username", ""));
             passwordEditText.setText(sharedPreferences.getString("cur_password", ""));
             isSave.setChecked(true);
         }
-
-
-
 
         // 设置监听器
         loginButton.setOnClickListener(v -> { // 登录按钮
             String userName = usernameEditText.getText().toString(); // 用户名
             String passwordNoEncrypted = passwordEditText.getText().toString(); // 未加密的密码
             Cursor cursor = engineerInfoDao.queryEngineerByUserName(userName);
-            Log.i("查询用户名结果"+userName,String.valueOf(cursor.getCount()));
+            Log.i("查询用户名结果" + userName, String.valueOf(cursor.getCount()));
             if (cursor.getCount() > 0) {
                 // 用户名存在
                 cursor.moveToFirst();
                 String password = cursor.getString(cursor.getColumnIndex("password"));
                 if (password.equals(GeneralHelper.sha256Encrypt(passwordNoEncrypted))) {
                     // 对比密文，密码正确，跳转
-                    GeneralHelper.customToast(this, userName+" 登录成功", R.layout.toast_view);
+                    GeneralHelper.customToast(this, userName + " 登录成功", R.layout.toast_view);
 
                     if (isSave.isChecked()) {
                         // 记住用户名/密码
@@ -74,13 +71,14 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     editor.putString("cur_username_show", userName); // 用于在主页面显示用户名
+                    editor.apply(); // 提交修改
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
                     // 密码错误
                     GeneralHelper.customToast(this, "密码错误", R.layout.toast_view_e);
                 }
-            }else {
+            } else {
                 // 用户名不存在
                 GeneralHelper.customToast(this, "用户名不存在", R.layout.toast_view_e);
             }
@@ -91,9 +89,9 @@ public class LoginActivity extends AppCompatActivity {
             String passwordNoEncrypted = passwordEditText.getText().toString(); // 未加密的密码
             Cursor cursor = engineerInfoDao.queryEngineerByUserName(userName);
             if (cursor.getCount() > 0) {
-               // 用户名存在，非法
+                // 用户名存在，非法
                 GeneralHelper.customToast(this, "用户名已存在", R.layout.toast_view_e);
-            }else {
+            } else {
                 // 用户名不存在
                 // 插入数据
                 engineerInfoDao.insertEngineer(new EngineerInfoEntity(userName, GeneralHelper.sha256Encrypt(passwordNoEncrypted)));

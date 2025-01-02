@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--MainActivity中底部导航栏的颜色选择器-->
+    <item android:color="@android:color/white" android:state_checked="true" />  <!-- 选中项 -->
+    <item android:color="@color/darkGrey" />  <!-- 默认项 -->
+</selector>

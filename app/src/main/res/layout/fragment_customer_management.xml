@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_customer"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@drawable/general_background"
+        app:subtitle="客户信息管理"
+        app:subtitleTextColor="@color/white"
+        app:title="客户管理"
+        app:titleMarginStart="30dp"
+        app:titleTextColor="@color/white" />
+
+    <view
+        android:id="@+id/listViewCustomer"
+        class="androidx.appcompat.app.AlertController$RecycleListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/no_color_background" />
+
+</LinearLayout>

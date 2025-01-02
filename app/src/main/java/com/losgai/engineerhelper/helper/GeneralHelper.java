@@ -13,7 +13,9 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 
 public class GeneralHelper { // 帮助类
-
+    // 统一定义数据库的名称与版本
+    public static final String DB_NAME = "engineer_sys.db";  // 数据库名称
+    public static final int DB_VERSION = 1;  // 数据库版本
     /**
      * SHA-256加密密码
      *

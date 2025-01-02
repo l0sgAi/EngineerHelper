@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.losgai.engineerhelper.R;
 import com.losgai.engineerhelper.entity.EngineerInfoEntity;
 import com.losgai.engineerhelper.helper.GeneralHelper;
 
@@ -17,8 +16,8 @@ import com.losgai.engineerhelper.helper.GeneralHelper;
 public class EngineerInfoDao {
 
     private static final String TAG = "EngineerInfoDao";
-    private static final String DB_NAME = "engineer_info.db";  // 数据库名称
-    private static final int DB_VERSION = 1;  // 数据库版本
+    private static final String DB_NAME = GeneralHelper.DB_NAME;  // 数据库名称
+    private static final int DB_VERSION = GeneralHelper.DB_VERSION;  // 数据库版本
     private static final String TABLE_NAME = "engineer_info";  // 表名
     private static final String ID = "id";  // 主键ID
     private static final String USERNAME = "username";  // 用户名
