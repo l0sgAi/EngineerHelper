@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_customer"
+        android:icon="@drawable/customer_general"
+        android:title="客户管理" />
+
+    <item
+        android:id="@+id/nav_product"
+        android:icon="@drawable/product_geneal"
+        android:title="产品管理" />
+
+    <item
+        android:id="@+id/nav_personal_data"
+        android:icon="@drawable/personal_data"
+        android:title="个人中心" />
+
+</menu>
