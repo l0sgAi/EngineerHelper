@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="14dp">
+
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/general_background"
+            android:gravity="center_horizontal"
+            android:subtitle="输入搜索参数"
+            android:subtitleTextColor="@color/white"
+            android:title="搜索"
+            android:titleTextColor="@color/white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="15dp"
+            android:text="搜索参数"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:text="姓名"
+            android:textSize="17sp" />
+
+        <EditText
+            android:id="@+id/search_customer_name_or_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_horizontal"
+            android:hint="输入姓名"
+            android:inputType="textPersonName"
+            android:minLines="1"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="15dp"
+            android:text="电话号"
+            android:textSize="17sp" />
+
+        <EditText
+            android:id="@+id/search_customer_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:autofillHints="18888888888"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_horizontal"
+            android:hint="输入电话号码"
+            android:inputType="phone"
+            android:minLines="1"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="15dp"
+            android:text="电子邮箱"
+            android:textSize="17sp" />
+
+        <EditText
+            android:id="@+id/search_customer_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:autofillHints="xxxx@gmail.com"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_horizontal"
+            android:hint="输入电子邮箱"
+            android:inputType="textEmailAddress"
+            android:minLines="1"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/searchBtn_customer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/general_background"
+            android:text="搜索"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+</ScrollView>

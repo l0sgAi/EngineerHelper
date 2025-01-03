@@ -17,12 +17,12 @@ import java.util.List;
 
 public class CustomerInfoDao {
 
-    private static final String TABLE_NAME = "customer_info";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_NAME = "customer_name";
-    private static final String COLUMN_ADDRESS = "address";
-    private static final String COLUMN_PHONE = "phone";
-    private static final String COLUMN_EMAIL = "email";
+    public static final String TABLE_NAME = "customer_info";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "customer_name";
+    public static final String COLUMN_ADDRESS = "address";
+    public static final String COLUMN_PHONE = "phone";
+    public static final String COLUMN_EMAIL = "email";
 
     private final DatabaseHelperCustomer dbHelper;
     private SQLiteDatabase database;
@@ -38,12 +38,12 @@ public class CustomerInfoDao {
         // 检查数据库中是否有 customer_info 表，如果没有则创建
         if (!isTableExists(TABLE_NAME)) {
             createCustomerInfoTable();
+            // 检查数据库中是否有数据，如果没有则插入初始3个客户数据
+            if (isDatabaseEmpty()) {
+                insertInitialCustomerData();
+            }
         }
 
-        // 检查数据库中是否有数据，如果没有则插入初始3个客户数据
-        if (isDatabaseEmpty()) {
-           insertInitialCustomerData();
-        }
     }
 
     // 关闭数据库
@@ -98,22 +98,36 @@ public class CustomerInfoDao {
         return customers;
     }
 
-    // 按用户名或id查询
-    public List<CustomerInfoEntity> getCustomersByNameOrId(String name, long id) {
-        return getCustomersByCondition(COLUMN_NAME + " LIKE ? OR"
-                + COLUMN_ID + " = ?", new String[]{"%" + name + "%", String.valueOf(id)});
-    }
+    // 按用户名电话和邮箱查询
+    public List<CustomerInfoEntity> getCustomersByNamePhoneEmail
+    (String name,
+     String phone,
+     String email) {
+        String selection = ""; // 查询条件
+        List<String> selectionArgs = new ArrayList<>(); // 查询参数
 
-    // 按电话查询
-    public List<CustomerInfoEntity> getCustomersByPhone(String phone, String email) {
-        return getCustomersByCondition(COLUMN_PHONE + " LIKE ?",
-                new String[]{"%" + phone + "%"});
-    }
+        // 构造查询条件与参数
+        if (!name.isEmpty()) {
+            selection += COLUMN_NAME + " LIKE ? ";
+            selectionArgs.add("%" + name + "%");
+        }
+        if (!phone.isEmpty()) {
+            if (!selection.isEmpty()) {
+                selection += " AND ";
+            }
+            selection += COLUMN_PHONE + " LIKE? ";
+            selectionArgs.add("%" + phone + "%");
+        }
+        if (!email.isEmpty()) {
+            if (!selection.isEmpty()) {
+                selection += " AND ";
+            }
+            selection += COLUMN_EMAIL + " LIKE? ";
+            selectionArgs.add("%" + email + "%");
+        }
 
-    // 按邮箱查询
-    public List<CustomerInfoEntity> getCustomersByEmail(String email) {
-        return getCustomersByCondition(COLUMN_EMAIL + " LIKE ?",
-                new String[]{"%" + email + "%"});
+        // 执行查询
+        return getCustomersByCondition(selection, selectionArgs.toArray(new String[0]));
     }
 
     // 通用条件查询
