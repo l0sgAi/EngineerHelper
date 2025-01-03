@@ -7,9 +7,9 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_customer"
+        android:id="@+id/toolbar_product"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
+        android:layout_height="72dp"
         android:background="@drawable/general_background"
         app:subtitle="产品信息管理"
         app:subtitleTextColor="@color/white"

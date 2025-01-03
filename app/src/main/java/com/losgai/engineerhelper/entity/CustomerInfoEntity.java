@@ -1,8 +1,6 @@
 package com.losgai.engineerhelper.entity;
 
 
-import java.util.HashSet;
-
 public class CustomerInfoEntity {
 
     private Long id;
@@ -11,12 +9,18 @@ public class CustomerInfoEntity {
     private String phone; // 电话
     private String email; // 邮箱
 
-    public CustomerInfoEntity(String customerName, String address, String phone, String email, HashSet<Long> productIds) { // 构造函数
+    // 构造函数
+    public CustomerInfoEntity(String customerName,
+                              String address,
+                              String phone,
+                              String email) {
         this.customerName = customerName;
         this.address = address;
         this.phone = phone;
         this.email = email;
     }
+
+    public CustomerInfoEntity() {} // 空构造函数
 
     public Long getId() {
         return id;

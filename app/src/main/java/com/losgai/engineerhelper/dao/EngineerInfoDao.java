@@ -1,5 +1,8 @@
 package com.losgai.engineerhelper.dao;
 
+import static com.losgai.engineerhelper.helper.GeneralHelper.DB_NAME;
+import static com.losgai.engineerhelper.helper.GeneralHelper.DB_VERSION;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,19 +18,18 @@ import com.losgai.engineerhelper.helper.GeneralHelper;
 
 public class EngineerInfoDao {
 
-    private static final String TAG = "EngineerInfoDao";
-    private static final String DB_NAME = GeneralHelper.DB_NAME;  // 数据库名称
-    private static final int DB_VERSION = GeneralHelper.DB_VERSION;  // 数据库版本
-    private static final String TABLE_NAME = "engineer_info";  // 表名
-    private static final String ID = "id";  // 主键ID
-    private static final String USERNAME = "username";  // 用户名
-    private static final String PASSWORD = "password";  // 密码
+    public static final String TAG = "EngineerInfoDao";
+    public static final String TABLE_NAME = "engineer_info";  // 表名
+    public static final String ID = "id";  // 主键ID
+    public static final String USERNAME = "username";  // 用户名
+    public static final String PASSWORD = "password";  // 密码
 
-    private final DatabaseHelper dbHelper;
+    // 内部帮助类和数据库对象
+    private final DatabaseHelperEngineer dbHelper;
     private SQLiteDatabase database;
 
     public EngineerInfoDao(Context context) {
-        dbHelper = new DatabaseHelper(context);
+        dbHelper = new DatabaseHelperEngineer(context);
     }
 
     // 打开数据库
@@ -81,30 +83,6 @@ public class EngineerInfoDao {
         return database.query(TABLE_NAME, null, null, null, null, null, null);
     }
 
-    // 创建数据库表
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-
-        public DatabaseHelper(Context context) {
-            super(context, DB_NAME, null, DB_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            String createTableSQL = "CREATE TABLE " + TABLE_NAME + " (" +
-                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    USERNAME + " TEXT NOT NULL, " +
-                    PASSWORD + " TEXT NOT NULL);";
-            db.execSQL(createTableSQL);
-            Log.i(TAG, "数据库 " + TABLE_NAME + " 已经创建.");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-            onCreate(db);
-        }
-    }
-
     // 检查数据库表是否为空
     private boolean isDatabaseEmpty() {
         Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
@@ -127,5 +105,29 @@ public class EngineerInfoDao {
             Log.d(TAG, "Inserted default admin user.");
         }
 
+    }
+
+    // 工程师信息表的内部helper类
+    private static class DatabaseHelperEngineer extends SQLiteOpenHelper {
+
+        public DatabaseHelperEngineer(Context context) {
+            super(context, DB_NAME, null, DB_VERSION);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            String createTableSQL = "CREATE TABLE " + TABLE_NAME + " (" +
+                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    USERNAME + " TEXT NOT NULL, " +
+                    PASSWORD + " TEXT NOT NULL);";
+            db.execSQL(createTableSQL);
+            Log.i(TAG, "数据库 " + TABLE_NAME + " 已经创建.");
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+            onCreate(db);
+        }
     }
 }

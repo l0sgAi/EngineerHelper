@@ -1,5 +1,6 @@
 package com.losgai.engineerhelper;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginBtn); // 登录按钮
         Button registerButton = findViewById(R.id.registerBtn); // 注册按钮
 
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch isSave = findViewById(R.id.saveAccount); // 是否记住用户名/密码按钮
 
         // 填入保存的用户名/密码
@@ -59,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             if (cursor.getCount() > 0) {
                 // 用户名存在
                 cursor.moveToFirst();
+                @SuppressLint("Range")
                 String password = cursor.getString(cursor.getColumnIndex("password"));
                 if (password.equals(GeneralHelper.sha256Encrypt(passwordNoEncrypted))) {
                     // 对比密文，密码正确，跳转

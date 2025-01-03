@@ -10,11 +10,14 @@ public class ProductEntity {
     private Date purchaseTime; // 创建时间;
     private Long customerId; // 客户ID;
 
-    public ProductEntity(String productName, Date purchaseTime, Long authInfoId,Long customerId) { // 构造函数
+    public ProductEntity(String productName, Date purchaseTime,Long customerId) { // 构造函数
         this.productName = productName;
         this.purchaseTime = purchaseTime;
         this.customerId = customerId;
     }
+
+
+    public ProductEntity() {} // 空构造函数
 
     public Long getId() {
         return id;

@@ -12,6 +12,8 @@ public class EngineerInfoEntity {
         this.password = password;
     }
 
+    public EngineerInfoEntity() {} // 空构造函数
+
     public Long getId() {
         return id;
     }

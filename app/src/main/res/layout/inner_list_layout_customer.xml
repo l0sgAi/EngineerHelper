@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageUrl_inner_customer"
+        android:src="@drawable/ic_customer_orange"
+        android:layout_width="100dp"
+        android:layout_height="80dp"/>
+
+    <TextView
+        android:id="@+id/inner_customer_id"
+        android:textSize="16sp"
+        android:textColor="#525252"
+        android:text="customer_id"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/inner_customer_name"
+        android:textColor="#525252"
+        android:text="customer_name"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/inner_customer_address"
+        android:textColor="#525252"
+        android:text="customer_address"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/inner_customer_phone"
+        android:textColor="#525252"
+        android:text="customer_phone"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/inner_customer_email"
+        android:textColor="#525252"
+        android:text="customer_email"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

@@ -26,6 +26,8 @@ public class AuthInfoEntity {
         this.productId = productId;
     }
 
+    public AuthInfoEntity() {} // 空构造函数
+
     public Long getId() {
         return id;
     }
