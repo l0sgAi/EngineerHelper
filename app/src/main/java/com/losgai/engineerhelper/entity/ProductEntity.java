@@ -8,12 +8,12 @@ public class ProductEntity {
     private Long id; // 序列号
     private String productName; // 产品名称;
     private Date purchaseTime; // 创建时间;
-    private Long AuthInfoId; // 授权信息ID;
+    private Long customerId; // 客户ID;
 
-    public ProductEntity(String productName, Date purchaseTime, Long authInfoId) { // 构造函数
+    public ProductEntity(String productName, Date purchaseTime, Long authInfoId,Long customerId) { // 构造函数
         this.productName = productName;
         this.purchaseTime = purchaseTime;
-        AuthInfoId = authInfoId;
+        this.customerId = customerId;
     }
 
     public Long getId() {
@@ -40,11 +40,11 @@ public class ProductEntity {
         this.purchaseTime = purchaseTime;
     }
 
-    public Long getAuthInfoId() {
-        return AuthInfoId;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setAuthInfoId(Long authInfoId) {
-        AuthInfoId = authInfoId;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }

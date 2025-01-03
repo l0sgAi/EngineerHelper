@@ -8,13 +8,22 @@ public class AuthInfoEntity {
     private Long id;
     private Date expireDate; // 授权过期时间
     private String authCode; // 授权码
+    private Long productId; // 产品ID
 
     // TODO: 授权码初定生成规则：当前时间戳+随机数+产品ID+客户ID+工程师ID+过期时间
     //  最后将字符串SHA256加密
 
-    public AuthInfoEntity(Date expireDate, String authCode) { // 构造函数
+    // 授权码生成方法
+    public static String generateAuthCode() {
+        String authCode = "";
+        // TODO: 生成授权码
+        return authCode;
+    }
+
+    public AuthInfoEntity(Date expireDate, String authCode,Long productId) { // 构造函数
         this.expireDate = expireDate;
         this.authCode = authCode;
+        this.productId = productId;
     }
 
     public Long getId() {
@@ -39,5 +48,13 @@ public class AuthInfoEntity {
 
     public void setAuthCode(String authCode) {
         this.authCode = authCode;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

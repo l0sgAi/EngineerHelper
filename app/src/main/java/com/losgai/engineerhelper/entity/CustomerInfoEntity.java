@@ -10,14 +10,12 @@ public class CustomerInfoEntity {
     private String address; // 地址
     private String phone; // 电话
     private String email; // 邮箱
-    private HashSet<Long> productIds; // 产品ID列表
 
     public CustomerInfoEntity(String customerName, String address, String phone, String email, HashSet<Long> productIds) { // 构造函数
         this.customerName = customerName;
         this.address = address;
         this.phone = phone;
         this.email = email;
-        this.productIds = productIds;
     }
 
     public Long getId() {
@@ -60,11 +58,4 @@ public class CustomerInfoEntity {
         this.email = email;
     }
 
-    public HashSet<Long> getProductIds() {
-        return productIds;
-    }
-
-    public void setProductIds(HashSet<Long> productIds) {
-        this.productIds = productIds;
-    }
 }
