@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="@drawable/no_color_background" />
+        android:background="@drawable/no_color_background"
+        android:paddingBottom="60sp"/> <!--确保底部不会被底栏遮挡-->
 
 </LinearLayout>

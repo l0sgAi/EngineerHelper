@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="14dp"
+        android:paddingBottom="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="14dp">
+
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="客户信息管理"
+            android:subtitle="新增或修改"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/general_background"
+            android:titleTextColor="@color/white"
+            android:subtitleTextColor="@color/white"/>
+
+        <ImageView
+            android:id="@+id/imageUrl"
+            android:src="@drawable/ic_customer_orange"
+            android:layout_width="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_height="80dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="基本信息"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:text="姓名"
+            android:textSize="17dp"/>
+
+        <EditText
+            android:id="@+id/customer_add_or_update_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/edit_text_background"
+            android:hint="客户姓名"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:minLines="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:text="地址"
+            android:textSize="17dp"/>
+
+        <EditText
+            android:id="@+id/customer_add_or_update_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/edit_text_background"
+            android:hint="客户地址"
+            android:inputType="textPostalAddress"
+            android:padding="10dp"
+            android:minLines="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:text="手机"
+            android:textSize="17dp"/>
+
+        <EditText
+            android:id="@+id/customer_add_or_update_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/edit_text_background"
+            android:hint="客户手机号"
+            android:inputType="phone"
+            android:padding="10dp"
+            android:minLines="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:text="电子邮箱"
+            android:textSize="17dp"/>
+
+        <EditText
+            android:id="@+id/customer_add_or_update_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/edit_text_background"
+            android:hint="客户电子邮箱"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:minLines="1"/>
+
+        <Button
+            android:layout_marginTop="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="提交"
+            android:id="@+id/submit_customer_add_or_update"
+            android:background="@drawable/general_background"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+</ScrollView>
+
+
+

@@ -54,11 +54,11 @@ public class CustomerAdapter extends ArrayAdapter<CustomerInfoEntity> {
 
         // 设置具体的文本内容
         customerImage.setImageResource(R.drawable.ic_customer_orange); // 设置默认图像
-        customerId.setText("用户编号： " + customerInfo.getId());
-        customerName.setText("用户名： " + customerInfo.getCustomerName());
-        customerAddress.setText("用户地址： " + customerInfo.getAddress());
-        customerPhone.setText("用户电话号： " + customerInfo.getPhone());
-        customerEmail.setText("用户邮箱： " + customerInfo.getEmail());
+        customerId.setText("编号： " + customerInfo.getId());
+        customerName.setText("客户名： " + customerInfo.getCustomerName());
+        customerAddress.setText("地址： " + customerInfo.getAddress());
+        customerPhone.setText("电话： " + customerInfo.getPhone());
+        customerEmail.setText("邮箱： " + customerInfo.getEmail());
 
         // 返回视图
         return view;
