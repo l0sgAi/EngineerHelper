@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageUrl_inner_product"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_product" />
+
+    <TextView
+        android:id="@+id/inner_product_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="product_id"
+        android:textColor="#525252"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/inner_product_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="product_name"
+        android:textColor="#525252"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/inner_product_customer_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="customer_id"
+        android:textColor="#525252"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/inner_product_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="product_date"
+        android:textColor="#525252"
+        android:textSize="16sp" />
+
+</LinearLayout>
