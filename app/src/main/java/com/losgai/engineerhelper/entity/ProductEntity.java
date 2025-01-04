@@ -1,7 +1,9 @@
 package com.losgai.engineerhelper.entity;
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class ProductEntity {
 
@@ -37,6 +39,11 @@ public class ProductEntity {
 
     public Date getPurchaseTime() {
         return purchaseTime;
+    }
+
+    public String DateToString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(purchaseTime);
     }
 
     public void setPurchaseTime(Date purchaseTime) {

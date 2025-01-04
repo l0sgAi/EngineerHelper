@@ -47,13 +47,15 @@ public class ProductListAdapter extends ArrayAdapter<ProductEntity> {
         TextView productId = view.findViewById(R.id.inner_product_id);
         TextView productName = view.findViewById(R.id.inner_product_name);
         TextView productDate = view.findViewById(R.id.inner_product_date);
+        TextView productCustomId = view.findViewById(R.id.inner_product_customer_id);
 
         // 设置具体的文本内容
         productImage.setImageResource(R.drawable.ic_product); // 设置默认图像
         productId.setText("编号： " + product.getId());
         productName.setText("产品名： " + product.getProductName());
+        productCustomId.setText("客户ID： " + product.getCustomerId());
+        //productDate.setText("购买时间： " + product.getPurchaseTime().getYear() + "年" + product.getPurchaseTime().getMonth() + "月" + product.getPurchaseTime().getDay() + "日");
         productDate.setText("购买时间： " + product.getPurchaseTime());
-
         return view;
     }
 }

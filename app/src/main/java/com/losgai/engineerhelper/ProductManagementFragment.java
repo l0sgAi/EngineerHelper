@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 
 import com.losgai.engineerhelper.adapter.ProductListAdapter;
+import com.losgai.engineerhelper.dao.CustomerInfoDao;
 import com.losgai.engineerhelper.dao.ProductInfoDao;
 import com.losgai.engineerhelper.entity.ProductEntity;
 
@@ -37,6 +38,7 @@ public class ProductManagementFragment extends Fragment {
     // TODO: 产品管理Fragment的布局文件添加对应的适配器和内部视图
 
     private ProductInfoDao productInfoDao; // 产品信息数据访问对象
+    private CustomerInfoDao customerInfoDao; // 客户信息数据访问对象
     private ListView productListView; // 产品列表视图
     private ProductListAdapter productListAdapter; // 产品列表适配器
     private List<ProductEntity> productEntityList; // 产品实体列表
@@ -53,7 +55,7 @@ public class ProductManagementFragment extends Fragment {
             productEntityList = productInfoDao.getAllProducts();
 
             // 绑定列表视图控件
-            productListView = view.findViewById(R.id.listViewCustomer);
+            productListView = view.findViewById(R.id.listViewProduct);
 
             // 创建适配器
             productListAdapter = new ProductListAdapter(getContext(), R.layout.inner_list_layout_product, productEntityList);
@@ -64,10 +66,11 @@ public class ProductManagementFragment extends Fragment {
         }
 
         // 长按列表项的监听器，弹出选项菜单
-//        productListView.setOnItemLongClickListener((parent, view1, position, id) -> {
-//            ProductEntity product = productEntityList.get(position);
-//            show
-//        }
+        productListView.setOnItemLongClickListener((parent, view1, position, id) -> {
+            ProductEntity productEntity = productEntityList.get(position);
+            showOperationDialog(productEntity);
+            return true;
+        });
         return view;
     }
 
@@ -113,7 +116,8 @@ public class ProductManagementFragment extends Fragment {
     }
 
     // 显示新增或更新对话框
-    private void showAddOrUpdateDialog(ProductListAdapter productListAdapter, ProductEntity productEntity) {
+    private void showAddOrUpdateDialog(ProductListAdapter productListAdapter,
+                                       ProductEntity productEntity) {
         Context context = requireContext();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -148,16 +152,28 @@ public class ProductManagementFragment extends Fragment {
                             calendar.getTime(),
                             Long.parseLong(productCustomerID.getText().toString())
                     );
+
+                    customerInfoDao = new CustomerInfoDao(context);
+                    customerInfoDao.open();
+                    if (!customerInfoDao.isCustomerExist(data.getCustomerId())) {
+                        customToast(context, "客户不存在，请先添加客户", R.layout.toast_view_e);
+                        return;
+                    }
+                    customerInfoDao.close();
+
                     Log.i("新增产品", "showAddOrUpdateDialog: " + data.getProductName());
 
+                    // 新增产品
                     if (!data.getProductName().isEmpty()) {
                         if (productInfoDao.addProduct(data) > 0) {
                             productEntityList.clear();
                             productEntityList.addAll(productInfoDao.getAllProducts());
-                            customToast(context, "数据已提交", R.layout.toast_view_e);
+                            customToast(context, "数据已提交", R.layout.toast_view);
                         } else {
                             customToast(context, "新增产品失败", R.layout.toast_view_e);
                         }
+                        productListAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
                     } else {
                         customToast(context, "新增产品失败，至少输入产品的名称！", R.layout.toast_view_e);
                     }
@@ -252,8 +268,8 @@ public class ProductManagementFragment extends Fragment {
 
         // 更新数据
         buttonUpdate.setOnClickListener(v -> {
-            alertDialog.dismiss();
             showAddOrUpdateDialog(productListAdapter, productEntity);
+            alertDialog.dismiss();
         });
 
         // 删除数据

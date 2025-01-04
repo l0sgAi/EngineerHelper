@@ -150,6 +150,15 @@ public class CustomerInfoDao {
         return customers;
     }
 
+    // 根据id查询用户是否存在
+    public boolean isCustomerExist(long id) {
+        Cursor cursor = database.query(TABLE_NAME, null, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)}, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
     // 检查数据库表是否为空
     private boolean isDatabaseEmpty() {
         Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
