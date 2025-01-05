@@ -37,6 +37,7 @@ import com.losgai.engineerhelper.entity.CustomerInfoEntity;
 import com.losgai.engineerhelper.entity.ProductEntity;
 
 import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -153,6 +154,7 @@ public class ProductManagementFragment extends Fragment {
 
         if (productEntity != null) { // 更新操作初始化
             productName.setText(productEntity.getProductName());
+
             // 将 Date 转换为字符串
             try{
                 String[] formattedDate = dateToStringArray(productEntity.getPurchaseTime());
@@ -185,6 +187,7 @@ public class ProductManagementFragment extends Fragment {
             if (defaultIndex != -1) {
                 productCustomer.setSelection(defaultIndex);
             }
+
             buttonSubmit.setText("更新");
         }
 
@@ -292,6 +295,7 @@ public class ProductManagementFragment extends Fragment {
                         return;
                     }
 
+
                     // 创建新的产品对象
                     ProductEntity data = new ProductEntity(
                             productName.getText().toString(),
@@ -352,8 +356,10 @@ public class ProductManagementFragment extends Fragment {
                     // 更新产品
                     if (!productName.getText().toString().isEmpty()) {
                         productEntity.setProductName(productName.getText().toString());
+
                         productEntity.setPurchaseTime(createDateFromInput(yearStr, monthStr, dayStr));
                         productEntity.setCustomerId(selectedCustomerId);
+
                         productInfoDao.updateProduct(productEntity);
                         reset("数据已更新", true);
                         dialog.dismiss();

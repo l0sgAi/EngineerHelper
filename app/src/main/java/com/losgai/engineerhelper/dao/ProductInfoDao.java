@@ -16,7 +16,7 @@ import android.util.Log;
 import com.losgai.engineerhelper.entity.ProductEntity;
 import com.losgai.engineerhelper.helper.DateUtil;
 
-import java.text.ParseException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,6 +77,12 @@ public class ProductInfoDao {
     public int deleteProduct(long id) {
         return database.delete(TABLE_NAME, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(id)});
+    }
+
+    // 根据客户ID删除产品
+    public int deleteProductByCustomerId(long customerId) {
+        return database.delete(TABLE_NAME, COLUMN_CUSTOMER_ID + " = ?",
+                new String[]{String.valueOf(customerId)});
     }
 
     // 查询所有产品
@@ -145,7 +151,7 @@ public class ProductInfoDao {
                 ProductEntity product = new ProductEntity();
                 product.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)));
                 product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
-
+              
                 // 设置购买时间，如果格式错误会报错
                 Date purchaseDate;
                 try {
