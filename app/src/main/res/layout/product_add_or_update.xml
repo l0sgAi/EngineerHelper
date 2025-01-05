@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="15dp"
-            android:text="客户Id"
+            android:text="所属客户"
             android:textSize="17dp" />
 
         <EditText
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/edit_text_background"
-            android:hint="客户Id"
+            android:hint="客户"
             android:inputType="textPersonName"
             android:minLines="1"
             android:padding="10dp" />

@@ -33,6 +33,7 @@ import java.util.Objects;
 import android.view.Menu;
 
 // 客户管理Fragment
+
 public class CustomerManagementFragment extends Fragment {
 
     private CustomerInfoDao customerInfoDao; // 客户信息DAO
@@ -261,6 +262,8 @@ public class CustomerManagementFragment extends Fragment {
         // 获取对应组件
         Button buttonUpdate = dialogView.findViewById(R.id.update_btn_customer);
         Button buttonDelete = dialogView.findViewById(R.id.delete_btn_customer);
+        Button buttonGetCustomerProducts = dialogView.findViewById(R.id.get_products_btn_customer);
+        Button buttonNavigate = dialogView.findViewById(R.id.navigate_btn_customer);
 
         // 弹出操作对话框
         AlertDialog alertDialog = builder.create();
@@ -276,7 +279,7 @@ public class CustomerManagementFragment extends Fragment {
         buttonDelete.setOnClickListener(v -> {
             // TODO: 删除时要把客户对应的所有产品关联信息删除，即customerId设置为null
             AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
-            confirmBuilder.setMessage("确认删除该顾客信息？对应的产品关联关系会一并删除！")
+            confirmBuilder.setMessage("确认删除该顾客信息？对应的产品会一并删除！")
                     .setPositiveButton("确认", (dialog, which) -> {
                         try {
                             // 用户点击确认后，执行删除操作
@@ -293,6 +296,18 @@ public class CustomerManagementFragment extends Fragment {
             confirmBuilder.create().show();
             alertDialog.dismiss();
         });
+
+        // 查看客户的产品信息
+        buttonGetCustomerProducts.setOnClickListener(v -> {
+            // TODO: 查看客户的产品信息
+            alertDialog.dismiss();
+        });
+
+        buttonNavigate.setOnClickListener(v -> {
+            // TODO: 导航至客户地址
+            alertDialog.dismiss();
+        });
+
     }
 
     // 刷新页面列表数据的方法

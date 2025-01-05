@@ -51,7 +51,6 @@ public class ProductManagementFragment extends Fragment {
             // 获取产品列表
             productInfoDao = new ProductInfoDao((getContext()));
             productInfoDao.open();
-            // 获取产品列表
             productEntityList = productInfoDao.getAllProducts();
 
             // 绑定列表视图控件
@@ -238,7 +237,7 @@ public class ProductManagementFragment extends Fragment {
             }
 
             // 获取构造的自定义查询结果
-            List<ProductEntity> productByName = productInfoDao.getProductByName(nameStr, idStr, customerIdStr);
+            List<ProductEntity> productByName = productInfoDao.getProductByName(nameStr, customerIdStr);
 
             // 更新适配器
             productEntityList.clear();
@@ -255,12 +254,12 @@ public class ProductManagementFragment extends Fragment {
         Context context = requireContext();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.operation_select_customer, null);
+        View dialogView = inflater.inflate(R.layout.operation_select_product, null);
         builder.setView(dialogView);
 
         // 获取对应组件
-        Button buttonUpdate = dialogView.findViewById(R.id.update_btn_customer);
-        Button buttonDelete = dialogView.findViewById(R.id.delete_btn_customer);
+        Button buttonUpdate = dialogView.findViewById(R.id.update_btn_product);
+        Button buttonDelete = dialogView.findViewById(R.id.delete_btn_product);
 
         // 弹出操作对话框
         AlertDialog alertDialog = builder.create();

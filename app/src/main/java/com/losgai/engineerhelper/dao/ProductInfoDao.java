@@ -1,19 +1,24 @@
 package com.losgai.engineerhelper.dao;
 
+import static com.losgai.engineerhelper.helper.GeneralHelper.DB_NAME;
+import static com.losgai.engineerhelper.helper.GeneralHelper.DB_VERSION;
+
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.losgai.engineerhelper.entity.ProductEntity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ProductInfoDao {
     private static final String TABLE_NAME = "product_info";
@@ -21,6 +26,10 @@ public class ProductInfoDao {
     private static final String COLUMN_NAME = "product_name"; // 产品名称
     private static final String COLUMN_DATE = "purchase_time"; // 创建时间
     private static final String COLUMN_CUSTOMER_ID = "customer_id"; // 客户ID
+
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat dateFormat =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private final DatabaseHelperProduct dbHelper;
     private SQLiteDatabase database;
@@ -82,14 +91,15 @@ public class ProductInfoDao {
                 product.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)));
                 product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
 
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    product.setPurchaseTime(dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                // 设置购买时间，如果格式错误会报错
+                Date purchaseDate;
+                try{
+                    purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
+                    product.setPurchaseTime(purchaseDate);
+                }catch (ParseException e){
+                    Log.e("ProductInfoDao", "日期转换失败");
                 }
 
-                // product.setPurchaseTime(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                 product.setCustomerId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
                 products.add(product);
             }
@@ -98,23 +108,14 @@ public class ProductInfoDao {
         return products;
     }
 
-    // 按产品名称查询
-    public List<ProductEntity> getProductByName(String name, String productId, String customerId) {
-        List<ProductEntity> products = new ArrayList<>();
+    // 按产品名称和客户id复合查询
+    public List<ProductEntity> getProductByName(String name, String customerId) {
         String selection = "";
         List<String> selectionArgs = new ArrayList<>();
 
         if (!name.isEmpty()) {
             selection += COLUMN_NAME + " LIKE ? ";
             selectionArgs.add("%" + name + "%");
-        }
-
-        if (!productId.isEmpty()) {
-            if (!selection.isEmpty()) {
-                selection += " AND ";
-            }
-            selection += COLUMN_ID + " = ? ";
-            selectionArgs.add(productId);
         }
 
         if (!customerId.isEmpty()) {
@@ -139,11 +140,13 @@ public class ProductInfoDao {
                 product.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)));
                 product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
 
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    product.setPurchaseTime(dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                // 设置购买时间，如果格式错误会报错
+                Date purchaseDate;
+                try{
+                    purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
+                    product.setPurchaseTime(purchaseDate);
+                }catch (ParseException e){
+                    Log.e("ProductInfoDao", "日期转换失败");
                 }
 
                 product.setCustomerId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
@@ -187,23 +190,21 @@ public class ProductInfoDao {
     private void createProductInfoTable() {
         String createTableSQL = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_NAME + " TEXT NOT NULL, " +
-                COLUMN_DATE + " TEXT NOT NULL, " +
-                COLUMN_CUSTOMER_ID + " INTEGER NOT NULL);";
+                COLUMN_NAME + " TEXT, " +
+                COLUMN_DATE + " TEXT, " +
+                COLUMN_CUSTOMER_ID + " INTEGER);";
         database.execSQL(createTableSQL);
     }
 
     // 插入初始产品数据
     private void insertInitialProductData() {
-        insertProductData(database, "产品1", "2024-12-01", 1);
-        insertProductData(database, "产品2", "2024-12-15", 2);
-        insertProductData(database, "产品3", "2025-01-03", 3);
+        insertProductData(database, "产品1", dateFormat.format(new Date()), 1);
+        insertProductData(database, "产品2", dateFormat.format(new Date()), 2);
+        insertProductData(database, "产品3", dateFormat.format(new Date()), 3);
     }
 
     // 产品信息表的内部helper类
     public static class DatabaseHelperProduct extends SQLiteOpenHelper {
-        private static final String DB_NAME = "product_info.db";
-        private static final int DB_VERSION = 1;
 
         public DatabaseHelperProduct(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
