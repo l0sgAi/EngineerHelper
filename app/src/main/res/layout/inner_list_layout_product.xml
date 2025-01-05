@@ -8,7 +8,7 @@
         android:id="@+id/imageUrl_inner_product"
         android:layout_width="100dp"
         android:layout_height="80dp"
-        android:src="@drawable/ic_product" />
+        android:src="@drawable/ic_product_2" />
 
     <TextView
         android:id="@+id/inner_product_id"

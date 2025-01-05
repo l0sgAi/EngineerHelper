@@ -35,11 +35,11 @@ public class ProductInfoDao {
 
         if (!isTableExists(TABLE_NAME)) {
             createProductInfoTable();
+            if (isDatabaseEmpty()) {
+                insertInitialProductData();
+            }
         }
 
-        if (isDatabaseEmpty()) {
-            insertInitialProductData();
-        }
     }
 
     // 关闭数据库

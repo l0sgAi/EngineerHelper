@@ -50,14 +50,65 @@
             android:gravity="center_horizontal"
             android:hint="用户名"
             android:padding="10dp"
-            android:textSize="25dp"/>
+            android:textSize="20dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:text="新密码"
+            android:textSize="17dp" />
+
+        <EditText
+            android:id="@+id/password_change_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_horizontal"
+            android:hint="输入新密码"
+            android:inputType="textPassword"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:text="确认密码"
+            android:textSize="17dp" />
+
+        <EditText
+            android:id="@+id/password_change_edit_affirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center_horizontal"
+            android:hint="确认密码"
+            android:inputType="textPassword"
+            android:padding="10dp" />
+
+        <Switch
+            android:id="@+id/saveAccount_change"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textOff="否"
+            android:textOn="是"
+            android:paddingEnd="15dp"
+            android:showText="true"
+            android:text="记住新密码"/>
 
         <Button
             android:id="@+id/passwordChangeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="25dp"
             android:background="@drawable/general_background"
             android:text="修改密码"
             android:textColor="@color/white" />
