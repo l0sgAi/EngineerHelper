@@ -1,5 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" android:drawable="@drawable/choose_text_background"/>
-    <item android:state_checked="false" android:drawable="@drawable/uncheck_text_background"/>
+    <!-- 选中状态（焦点） -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="2dp" android:color="#FFA500" /> <!-- 橙色 -->
+            <corners android:radius="14dp" /> <!-- 可选，圆角边框 -->
+        </shape>
+    </item>
+    <!-- 未选中状态 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="2dp" android:color="#D3D3D3" /> <!-- 灰色 -->
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
 </selector>

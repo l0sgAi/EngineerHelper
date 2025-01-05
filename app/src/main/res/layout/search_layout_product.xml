@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
     <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -35,26 +32,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:paddingTop="5dp"
-            android:text="产品id"
-            android:textSize="17sp" />
-
-        <EditText
-            android:id="@+id/search_product_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/edit_text_background"
-            android:gravity="center_horizontal"
-            android:hint="输入产品id"
-            android:inputType="textPersonName"
-            android:minLines="1"
-            android:padding="10dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:paddingTop="15dp"
             android:text="产品名称"
             android:textSize="17sp" />
@@ -76,20 +53,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
-            android:text="客户id"
+            android:text="选择客户"
             android:textSize="17sp" />
 
-        <EditText
-            android:id="@+id/search_product_costumer_id"
+        <Spinner
+            android:id="@+id/spinner_customer_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/edit_text_background"
-            android:gravity="center_horizontal"
-            android:hint="输入客户id"
-            android:inputType="textPersonName"
-            android:minLines="1"
-            android:padding="10dp" />
+            android:paddingBottom="35sp"
+            />
 
         <Button
             android:id="@+id/searchBtn_product"
@@ -102,5 +74,3 @@
             android:textColor="@color/white" />
 
     </LinearLayout>
-
-</ScrollView>

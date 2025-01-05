@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/inner_customer_id_dropdown"
+        android:textSize="16sp"
+        android:textColor="#525252"
+        android:text="customer_id"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/inner_customer_name_dropdown"
+        android:textColor="#525252"
+        android:text="customer_name"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/inner_customer_address_dropdown"
+        android:textColor="#525252"
+        android:text="customer_address"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/inner_customer_phone_dropdown"
+        android:textColor="#525252"
+        android:text="customer_phone"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/inner_customer_email_dropdown"
+        android:textColor="#525252"
+        android:text="customer_email"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- 添加横线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/darkerGrey"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>
