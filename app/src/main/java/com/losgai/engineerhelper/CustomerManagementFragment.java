@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,17 +26,17 @@ import androidx.lifecycle.Lifecycle;
 
 import com.losgai.engineerhelper.adapter.CustomerAdapter;
 import com.losgai.engineerhelper.dao.CustomerInfoDao;
+import com.losgai.engineerhelper.dao.ProductInfoDao;
 import com.losgai.engineerhelper.entity.CustomerInfoEntity;
 
 import java.util.List;
 import java.util.Objects;
 
-import android.view.Menu;
-
 // 客户管理Fragment
 public class CustomerManagementFragment extends Fragment {
 
     private CustomerInfoDao customerInfoDao; // 客户信息DAO
+    private ProductInfoDao productInfoDao; // 产品信息DAO
     private ListView customerListView; // 客户信息列表视图
     private CustomerAdapter customerAdapter; // 客户信息适配器
     private List<CustomerInfoEntity> customerList; // 客户信息列表
@@ -47,6 +48,8 @@ public class CustomerManagementFragment extends Fragment {
             // 获取所有客户信息
             customerInfoDao = new CustomerInfoDao(getContext());
             customerInfoDao.open();
+            productInfoDao = new ProductInfoDao(getContext());
+            productInfoDao.open();
             // 客户信息列表
             customerList = customerInfoDao.getAllCustomers();
 
@@ -280,7 +283,8 @@ public class CustomerManagementFragment extends Fragment {
                     .setPositiveButton("确认", (dialog, which) -> {
                         try {
                             // 用户点击确认后，执行删除操作
-                            if (customerInfoDao.deleteCustomer(customerInfoEntity.getId()) > 0) {
+                            if (customerInfoDao.deleteCustomer(customerInfoEntity.getId()) > 0 &&
+                                    productInfoDao.deleteProductByCustomerId(customerInfoEntity.getId()) > 0) {
                                 reset("数据已删除", true);
                             } else {
                                 customToast(context, "删除数据失败", R.layout.toast_view_e);

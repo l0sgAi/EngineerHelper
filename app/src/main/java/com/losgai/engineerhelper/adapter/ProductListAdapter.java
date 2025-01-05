@@ -55,10 +55,6 @@ public class ProductListAdapter extends ArrayAdapter<ProductEntity> {
         productName.setText("产品名： " + product.getProductName());
         productCustomId.setText("客户ID： " + product.getCustomerId());
 
-//        if (product.getPurchaseTime() != null) {
-//            productDate.setText("购买时间： " + product.DateToString());
-//        }
-
         productDate.setText("购买时间： " + product.getPurchaseTime());
         return view;
     }

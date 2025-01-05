@@ -71,6 +71,12 @@ public class ProductInfoDao {
                 new String[]{String.valueOf(id)});
     }
 
+    // 根据客户ID删除产品
+    public int deleteProductByCustomerId(long customerId) {
+        return database.delete(TABLE_NAME, COLUMN_CUSTOMER_ID + " = ?",
+                new String[]{String.valueOf(customerId)});
+    }
+
     // 查询所有产品
     public List<ProductEntity> getAllProducts() {
         List<ProductEntity> products = new ArrayList<>();
