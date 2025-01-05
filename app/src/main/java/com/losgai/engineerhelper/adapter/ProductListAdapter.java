@@ -54,7 +54,11 @@ public class ProductListAdapter extends ArrayAdapter<ProductEntity> {
         productId.setText("编号： " + product.getId());
         productName.setText("产品名： " + product.getProductName());
         productCustomId.setText("客户ID： " + product.getCustomerId());
-        //productDate.setText("购买时间： " + product.getPurchaseTime().getYear() + "年" + product.getPurchaseTime().getMonth() + "月" + product.getPurchaseTime().getDay() + "日");
+
+//        if (product.getPurchaseTime() != null) {
+//            productDate.setText("购买时间： " + product.DateToString());
+//        }
+
         productDate.setText("购买时间： " + product.getPurchaseTime());
         return view;
     }

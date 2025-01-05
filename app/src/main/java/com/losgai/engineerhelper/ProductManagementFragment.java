@@ -30,6 +30,7 @@ import com.losgai.engineerhelper.dao.ProductInfoDao;
 import com.losgai.engineerhelper.entity.ProductEntity;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -132,7 +133,7 @@ public class ProductManagementFragment extends Fragment {
 
         if (productEntity != null) {
             productName.setText(productEntity.getProductName());
-            productDate.updateDate(productEntity.getPurchaseTime().getYear(), productEntity.getPurchaseTime().getMonth(), productEntity.getPurchaseTime().getDay());
+            //productDate.updateDate(productEntity.getPurchaseTime().getYear(), productEntity.getPurchaseTime().getMonth() - 1, productEntity.getPurchaseTime().getDay());
             productCustomerID.setText(String.valueOf(productEntity.getCustomerId()));
             buttonSubmit.setText("更新");
         }
@@ -146,11 +147,13 @@ public class ProductManagementFragment extends Fragment {
                 try {
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(productDate.getYear(), productDate.getMonth(), productDate.getDayOfMonth());
+                    Date date = new Date(calendar.getTime().getYear(), calendar.getTime().getMonth(), calendar.getTime().getDay());
+
                     // 创建新的产品对象
                     ProductEntity data = new ProductEntity(
                             productName.getText().toString(),
-                            calendar.getTime(),
-                            Long.parseLong(productCustomerID.getText().toString())
+                            date,
+                            productCustomerID.getText().toString().isEmpty() ? 0 : Long.parseLong(productCustomerID.getText().toString())
                     );
 
                     customerInfoDao = new CustomerInfoDao(context);
@@ -191,7 +194,8 @@ public class ProductManagementFragment extends Fragment {
 
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(productDate.getYear(), productDate.getMonth(), productDate.getDayOfMonth());
-                        productEntity.setPurchaseTime(calendar.getTime());
+                        Date date = calendar.getTime();
+                        productEntity.setPurchaseTime(date);
 
                         productEntity.setCustomerId(Long.parseLong(productCustomerID.getText().toString()));
 

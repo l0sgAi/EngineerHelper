@@ -9,11 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.losgai.engineerhelper.entity.ProductEntity;
 
-import java.text.ParseException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class ProductInfoDao {
     private static final String TABLE_NAME = "product_info";
@@ -51,7 +50,7 @@ public class ProductInfoDao {
     public long addProduct(ProductEntity product) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, product.getProductName());
-        values.put(COLUMN_DATE, product.getPurchaseTime().toString());
+        values.put(COLUMN_DATE, new SimpleDateFormat("yyyy-MM-dd").format(product.getPurchaseTime()));
         values.put(COLUMN_CUSTOMER_ID, product.getCustomerId());
         return database.insert(TABLE_NAME, null, values);
     }
@@ -60,7 +59,7 @@ public class ProductInfoDao {
     public int updateProduct(ProductEntity product) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, product.getProductName());
-        values.put(COLUMN_DATE, product.getPurchaseTime().toString());
+        values.put(COLUMN_DATE, new SimpleDateFormat("yyyy-MM-dd").format(product.getPurchaseTime()));
         values.put(COLUMN_CUSTOMER_ID, product.getCustomerId());
         return database.update(TABLE_NAME, values, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(product.getId())});
@@ -82,14 +81,12 @@ public class ProductInfoDao {
                 product.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)));
                 product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
 
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    product.setPurchaseTime(dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE));
+                if (date != null) {
+                    Date purchaseTime = Date.valueOf(date);
+                    product.setPurchaseTime(purchaseTime);
                 }
 
-                // product.setPurchaseTime(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                 product.setCustomerId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
                 products.add(product);
             }
@@ -139,12 +136,9 @@ public class ProductInfoDao {
                 product.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)));
                 product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
 
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    product.setPurchaseTime(dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE));
+                Date purchaseTime = Date.valueOf(date);
+                product.setPurchaseTime(purchaseTime);
 
                 product.setCustomerId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
                 products.add(product);
