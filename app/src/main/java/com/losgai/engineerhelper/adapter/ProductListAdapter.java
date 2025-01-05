@@ -1,5 +1,7 @@
 package com.losgai.engineerhelper.adapter;
 
+import static com.losgai.engineerhelper.helper.DateUtil.dateToString;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -53,7 +55,7 @@ public class ProductListAdapter extends ArrayAdapter<ProductEntity> {
         productImage.setImageResource(R.drawable.ic_product_2); // 设置默认图像
         productId.setText("编号： " + product.getId());
         productName.setText("产品名： " + product.getProductName());
-        productDate.setText("购买时间： " + product.getPurchaseTime());
+        productDate.setText("购买时间： " + dateToString(product.getPurchaseTime()));
         productCustomId.setText("所属客户ID： " + product.getCustomerId());
 
         return view;

@@ -39,17 +39,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="查看客户商品"
-        android:id="@+id/get_products_btn_customer"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/general_background"
-        android:textColor="@color/white"
-        android:layout_margin="3dp"
-        android:textSize="19sp"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="导航至用户地址"
         android:id="@+id/navigate_btn_customer"
         android:layout_gravity="center_vertical"

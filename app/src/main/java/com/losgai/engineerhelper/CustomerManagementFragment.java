@@ -262,7 +262,6 @@ public class CustomerManagementFragment extends Fragment {
         // 获取对应组件
         Button buttonUpdate = dialogView.findViewById(R.id.update_btn_customer);
         Button buttonDelete = dialogView.findViewById(R.id.delete_btn_customer);
-        Button buttonGetCustomerProducts = dialogView.findViewById(R.id.get_products_btn_customer);
         Button buttonNavigate = dialogView.findViewById(R.id.navigate_btn_customer);
 
         // 弹出操作对话框
@@ -294,12 +293,6 @@ public class CustomerManagementFragment extends Fragment {
                     }).setNegativeButton("取消", null); // 用户点击取消，不做任何操作
 
             confirmBuilder.create().show();
-            alertDialog.dismiss();
-        });
-
-        // 查看客户的产品信息
-        buttonGetCustomerProducts.setOnClickListener(v -> {
-            // TODO: 查看客户的产品信息
             alertDialog.dismiss();
         });
 

@@ -1,9 +1,10 @@
 package com.losgai.engineerhelper.dao;
 
+import static com.losgai.engineerhelper.helper.DateUtil.dateFormat;
+import static com.losgai.engineerhelper.helper.DateUtil.dateToString;
 import static com.losgai.engineerhelper.helper.GeneralHelper.DB_NAME;
 import static com.losgai.engineerhelper.helper.GeneralHelper.DB_VERSION;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.losgai.engineerhelper.entity.ProductEntity;
+import com.losgai.engineerhelper.helper.DateUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,10 +28,6 @@ public class ProductInfoDao {
     private static final String COLUMN_NAME = "product_name"; // 产品名称
     private static final String COLUMN_DATE = "purchase_time"; // 创建时间
     private static final String COLUMN_CUSTOMER_ID = "customer_id"; // 客户ID
-
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat dateFormat =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private final DatabaseHelperProduct dbHelper;
     private SQLiteDatabase database;
@@ -60,7 +58,7 @@ public class ProductInfoDao {
     public long addProduct(ProductEntity product) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, product.getProductName());
-        values.put(COLUMN_DATE, product.getPurchaseTime().toString());
+        values.put(COLUMN_DATE, dateToString(product.getPurchaseTime()));
         values.put(COLUMN_CUSTOMER_ID, product.getCustomerId());
         return database.insert(TABLE_NAME, null, values);
     }
@@ -69,7 +67,7 @@ public class ProductInfoDao {
     public int updateProduct(ProductEntity product) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, product.getProductName());
-        values.put(COLUMN_DATE, product.getPurchaseTime().toString());
+        values.put(COLUMN_DATE, dateToString(product.getPurchaseTime()));
         values.put(COLUMN_CUSTOMER_ID, product.getCustomerId());
         return database.update(TABLE_NAME, values, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(product.getId())});
@@ -93,11 +91,19 @@ public class ProductInfoDao {
 
                 // 设置购买时间，如果格式错误会报错
                 Date purchaseDate;
-                try{
+                try {
+                    // 使用线程安全的 SimpleDateFormat 解析日期
+                    SimpleDateFormat dateFormat = DateUtil.dateFormat.get();
+                    if(dateFormat == null){
+                        Log.e("ProductInfoDao_查询获取所有产品", "dateFormat为空");
+                        return products;
+                    }
                     purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                     product.setPurchaseTime(purchaseDate);
-                }catch (ParseException e){
-                    Log.e("ProductInfoDao", "日期转换失败");
+                } catch (ParseException e) {
+                    Log.e("ProductInfoDao_查询获取所有产品",
+                            "日期转换失败" +
+                                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                 }
 
                 product.setCustomerId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
@@ -109,7 +115,7 @@ public class ProductInfoDao {
     }
 
     // 按产品名称和客户id复合查询
-    public List<ProductEntity> getProductByName(String name, String customerId) {
+    public List<ProductEntity> getProductByName(String name, long customerId) {
         String selection = "";
         List<String> selectionArgs = new ArrayList<>();
 
@@ -118,12 +124,12 @@ public class ProductInfoDao {
             selectionArgs.add("%" + name + "%");
         }
 
-        if (!customerId.isEmpty()) {
+        if (customerId > 0) { // 如果客户ID大于0则说明选中了
             if (!selection.isEmpty()) {
                 selection += " AND ";
             }
             selection += COLUMN_CUSTOMER_ID + " = ? ";
-            selectionArgs.add(customerId);
+            selectionArgs.add(String.valueOf(customerId));
         }
 
         return getProductsByCondition(selection, selectionArgs.toArray(new String[0]));
@@ -142,11 +148,19 @@ public class ProductInfoDao {
 
                 // 设置购买时间，如果格式错误会报错
                 Date purchaseDate;
-                try{
+                try {
+                    // 使用线程安全的 SimpleDateFormat 解析日期
+                    SimpleDateFormat dateFormat = DateUtil.dateFormat.get();
+                    if(dateFormat == null){
+                        Log.e("ProductInfoDao_查询产品", "日dateFormat为空");
+                        return products;
+                    }
                     purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                     product.setPurchaseTime(purchaseDate);
-                }catch (ParseException e){
-                    Log.e("ProductInfoDao", "日期转换失败");
+                } catch (ParseException e) {
+                    Log.e("ProductInfoDao_查询商品",
+                            "日期转换失败" +
+                                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                 }
 
                 product.setCustomerId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
@@ -198,6 +212,9 @@ public class ProductInfoDao {
 
     // 插入初始产品数据
     private void insertInitialProductData() {
+        // 使用线程安全的 SimpleDateFormat 解析日期
+        SimpleDateFormat dateFormat = DateUtil.dateFormat.get();
+        assert dateFormat != null;
         insertProductData(database, "产品1", dateFormat.format(new Date()), 1);
         insertProductData(database, "产品2", dateFormat.format(new Date()), 2);
         insertProductData(database, "产品3", dateFormat.format(new Date()), 3);

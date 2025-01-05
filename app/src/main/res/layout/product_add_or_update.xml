@@ -64,33 +64,78 @@
             android:text="所属客户"
             android:textSize="17dp" />
 
-        <EditText
-            android:id="@+id/product_add_or_update_customer_id"
+        <Spinner
+            android:id="@+id/spinner_customer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/edit_text_background"
-            android:hint="客户"
-            android:inputType="textPersonName"
-            android:minLines="1"
-            android:padding="10dp" />
+            />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="15dp"
-            android:text="创建时间"
+            android:text="购买时间"
             android:textSize="17dp" />
 
-        <DatePicker
-            android:id="@+id/product_add_or_update_date"
+        <!-- 年输入框 -->
+        <EditText
+            android:id="@+id/inputYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:hint="年 (YYYY)"
             android:background="@drawable/edit_text_background"
-            android:hint="产品创建时间"
-            android:inputType="date"
-            android:padding="10dp" />
+            android:inputType="number"
+            android:maxLength="4"
+            android:textSize="20sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
+            android:text="年"
+            android:textSize="17dp"
+            android:gravity="center"/>
+
+        <!-- 月输入框 -->
+        <EditText
+            android:id="@+id/inputMonth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="月 (MM)"
+            android:background="@drawable/edit_text_background"
+            android:inputType="number"
+            android:maxLength="2"
+            android:textSize="20sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
+            android:text="月"
+            android:textSize="17dp"
+            android:gravity="center"/>
+
+        <!-- 日输入框 -->
+        <EditText
+            android:id="@+id/inputDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="日 (DD)"
+            android:background="@drawable/edit_text_background"
+            android:inputType="number"
+            android:maxLength="2"
+            android:textSize="20sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
+            android:text="日"
+            android:textSize="17dp"
+            android:gravity="center"/>
 
         <Button
             android:layout_marginTop="35dp"
@@ -101,7 +146,6 @@
             android:background="@drawable/general_background"
             android:textColor="@color/white"
             android:layout_gravity="center_horizontal"/>
-
 
 
     </LinearLayout>
