@@ -29,6 +29,7 @@ import com.losgai.engineerhelper.dao.CustomerInfoDao;
 import com.losgai.engineerhelper.dao.ProductInfoDao;
 import com.losgai.engineerhelper.entity.CustomerInfoEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,6 +54,9 @@ public class CustomerManagementFragment extends Fragment {
             productInfoDao.open();
             // 客户信息列表
             customerList = customerInfoDao.getAllCustomers();
+            if (customerList == null) {
+                customerList = new ArrayList<>(); // 避免后续操作空指针
+            }
 
             // 绑定列表视图控件
             customerListView = view.findViewById(R.id.listViewCustomer);
@@ -279,7 +283,6 @@ public class CustomerManagementFragment extends Fragment {
 
         // 删除数据
         buttonDelete.setOnClickListener(v -> {
-            // TODO: 删除时要把客户对应的所有产品关联信息删除，即customerId设置为null
             AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
             confirmBuilder.setMessage("确认删除该顾客信息？对应的产品会一并删除！")
                     .setPositiveButton("确认", (dialog, which) -> {
@@ -309,7 +312,8 @@ public class CustomerManagementFragment extends Fragment {
 
     // 刷新页面列表数据的方法
     private void reset(String msg, Boolean showToast) {
-        customerList.clear();
+        if(!customerList.isEmpty())
+            customerList.clear();
         customerList.addAll(customerInfoDao.getAllCustomers());
         customerAdapter.notifyDataSetChanged();
         if (showToast)

@@ -38,13 +38,13 @@ import com.losgai.engineerhelper.entity.ProductEntity;
 
 import java.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 // 产品管理Fragment
 public class ProductManagementFragment extends Fragment {
-    // TODO: 产品管理Fragment的布局文件添加对应的适配器和内部视图
     private ProductInfoDao productInfoDao; // 产品信息数据访问对象
     private CustomerInfoDao customerInfoDao; // 客户信息数据访问对象
     private ListView productListView; // 产品列表视图
@@ -54,12 +54,15 @@ public class ProductManagementFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_management, container, false);
-        // TODO: 产品管理Fragment的逻辑
         try {
             // 获取产品列表
             productInfoDao = new ProductInfoDao((getContext()));
             productInfoDao.open();
             productEntityList = productInfoDao.getAllProducts();
+
+            if (productEntityList == null) {
+                productEntityList = new ArrayList<>(); // 避免后续操作空指针
+            }
 
             // 绑定列表视图控件
             productListView = view.findViewById(R.id.listViewProduct);
@@ -72,12 +75,16 @@ public class ProductManagementFragment extends Fragment {
             Log.e("创建产品列表失败", Objects.requireNonNull(e.getMessage()));
         }
 
-        // 长按列表项的监听器，弹出选项菜单
-        productListView.setOnItemLongClickListener((parent, view1, position, id) -> {
-            ProductEntity productEntity = productEntityList.get(position);
-            showOperationDialog(productEntity);
-            return true;
-        });
+        // 将监听器设置放在 try-catch 外部
+        if (productListView != null) {
+            productListView.setOnItemLongClickListener((parent, view1, position, id) -> {
+                ProductEntity productEntity = productEntityList.get(position);
+                showOperationDialog(productEntity);
+                return true;
+            });
+        } else {
+            Log.e("ListViewError", "productListView is null");
+        }
         return view;
     }
 
@@ -478,7 +485,8 @@ public class ProductManagementFragment extends Fragment {
     }
 
     public void reset(String msg, Boolean showTest) {
-        productEntityList.clear();
+        if(!productEntityList.isEmpty())
+            productEntityList.clear();
         productEntityList.addAll(productInfoDao.getAllProducts());
         productListAdapter.notifyDataSetChanged();
         if (showTest) {

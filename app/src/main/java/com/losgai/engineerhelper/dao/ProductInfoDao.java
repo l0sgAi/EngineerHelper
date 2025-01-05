@@ -1,6 +1,5 @@
 package com.losgai.engineerhelper.dao;
 
-import static com.losgai.engineerhelper.helper.DateUtil.dateFormat;
 import static com.losgai.engineerhelper.helper.DateUtil.dateToString;
 import static com.losgai.engineerhelper.helper.GeneralHelper.DB_NAME;
 import static com.losgai.engineerhelper.helper.GeneralHelper.DB_VERSION;
@@ -16,7 +15,7 @@ import android.util.Log;
 import com.losgai.engineerhelper.entity.ProductEntity;
 import com.losgai.engineerhelper.helper.DateUtil;
 
-import java.sql.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,7 +103,7 @@ public class ProductInfoDao {
                         Log.e("ProductInfoDao_查询获取所有产品", "dateFormat为空");
                         return products;
                     }
-                    purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
+                    purchaseDate = (Date) dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                     product.setPurchaseTime(purchaseDate);
                 } catch (ParseException e) {
                     Log.e("ProductInfoDao_查询获取所有产品",
@@ -161,7 +160,7 @@ public class ProductInfoDao {
                         Log.e("ProductInfoDao_查询产品", "日dateFormat为空");
                         return products;
                     }
-                    purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
+                    purchaseDate = (Date) dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                     product.setPurchaseTime(purchaseDate);
                 } catch (ParseException e) {
                     Log.e("ProductInfoDao_查询商品",
@@ -221,9 +220,9 @@ public class ProductInfoDao {
         // 使用线程安全的 SimpleDateFormat 解析日期
         SimpleDateFormat dateFormat = DateUtil.dateFormat.get();
         assert dateFormat != null;
-        insertProductData(database, "产品1", dateFormat.format(new Date()), 1);
-        insertProductData(database, "产品2", dateFormat.format(new Date()), 2);
-        insertProductData(database, "产品3", dateFormat.format(new Date()), 3);
+        insertProductData(database, "产品1", dateFormat.format(new java.util.Date()), 1);
+        insertProductData(database, "产品2", dateFormat.format(new java.util.Date()), 2);
+        insertProductData(database, "产品3", dateFormat.format(new java.util.Date()), 3);
     }
 
     // 产品信息表的内部helper类
