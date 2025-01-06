@@ -160,7 +160,7 @@ public class ProductInfoDao {
                         Log.e("ProductInfoDao_查询产品", "日dateFormat为空");
                         return products;
                     }
-                    purchaseDate = (Date) dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
+                    purchaseDate = dateFormat.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
                     product.setPurchaseTime(purchaseDate);
                 } catch (ParseException e) {
                     Log.e("ProductInfoDao_查询商品",

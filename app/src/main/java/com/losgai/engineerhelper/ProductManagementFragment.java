@@ -1,10 +1,12 @@
 package com.losgai.engineerhelper;
 
 import static com.losgai.engineerhelper.helper.DateUtil.createDateFromInput;
+import static com.losgai.engineerhelper.helper.DateUtil.dateToString;
 import static com.losgai.engineerhelper.helper.DateUtil.dateToStringArray;
 import static com.losgai.engineerhelper.helper.GeneralHelper.customToast;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -31,22 +34,27 @@ import androidx.lifecycle.Lifecycle;
 
 import com.losgai.engineerhelper.adapter.CustomerAdapter;
 import com.losgai.engineerhelper.adapter.ProductListAdapter;
+import com.losgai.engineerhelper.dao.AuthInfoDao;
 import com.losgai.engineerhelper.dao.CustomerInfoDao;
 import com.losgai.engineerhelper.dao.ProductInfoDao;
+import com.losgai.engineerhelper.entity.AuthInfoEntity;
 import com.losgai.engineerhelper.entity.CustomerInfoEntity;
 import com.losgai.engineerhelper.entity.ProductEntity;
 
 import java.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 // 产品管理Fragment
 public class ProductManagementFragment extends Fragment {
     private ProductInfoDao productInfoDao; // 产品信息数据访问对象
     private CustomerInfoDao customerInfoDao; // 客户信息数据访问对象
+    private AuthInfoDao authInfoDao; // 授权信息数据访问对象
     private ListView productListView; // 产品列表视图
     private ProductListAdapter productListAdapter; // 产品列表适配器
     private List<ProductEntity> productEntityList; // 产品实体列表
@@ -163,7 +171,7 @@ public class ProductManagementFragment extends Fragment {
             productName.setText(productEntity.getProductName());
 
             // 将 Date 转换为字符串
-            try{
+            try {
                 String[] formattedDate = dateToStringArray(productEntity.getPurchaseTime());
                 String year = formattedDate[0];  // 年
                 String month = formattedDate[1]; // 月
@@ -173,11 +181,7 @@ public class ProductManagementFragment extends Fragment {
                 inputYear.setText(year);
                 inputMonth.setText(month);
                 inputDay.setText(day);
-
-                // 显示月、日输入框
-                inputMonth.setVisibility(View.VISIBLE);
-                inputDay.setVisibility(View.VISIBLE);
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
             }
 
@@ -204,6 +208,11 @@ public class ProductManagementFragment extends Fragment {
 
         // 年份监听
         inputYear.addTextChangedListener(createTextWatcher(inputYear, 4, year -> {
+            // 月份不为空，则先清空输入的月
+            if (!inputMonth.getText().toString().isEmpty()) {
+                inputMonth.getText().clear();
+            }
+
             if (year.length() == 4) {
                 int enteredYear = Integer.parseInt(year);
                 int currentYear = 0;
@@ -221,6 +230,11 @@ public class ProductManagementFragment extends Fragment {
 
         // 月份监听
         inputMonth.addTextChangedListener(createTextWatcher(inputMonth, 2, month -> {
+            // 日期不为空，则先清空输入的日
+            if (!inputDay.getText().toString().isEmpty()) {
+                inputDay.getText().clear();
+            }
+
             if (month.length() == 2) {
                 int enteredMonth = Integer.parseInt(month);
                 if (enteredMonth >= 1 && enteredMonth <= 12) {
@@ -237,7 +251,8 @@ public class ProductManagementFragment extends Fragment {
             String yearStr = inputYear.getText().toString();
             String monthStr = inputMonth.getText().toString();
 
-            if(yearStr.isEmpty() || monthStr.isEmpty()) {
+            if (yearStr.isEmpty() || monthStr.isEmpty()) {
+                inputDay.getText().clear();
                 customToast(context, "请选择年/月", R.layout.toast_view_e);
                 return;
             }
@@ -267,9 +282,13 @@ public class ProductManagementFragment extends Fragment {
                         } else {
                             inputDay.getText().clear();
                             customToast(context,
-                                    "必须选择之前的日期!", R.layout.toast_view_e);
+                                    "必须选择之前的日期", R.layout.toast_view_e);
                         }
                     }
+                } else {
+                    inputDay.getText().clear();
+                    customToast(context,
+                            "请输入合法的日期", R.layout.toast_view_e);
                 }
             }
         }));
@@ -281,8 +300,12 @@ public class ProductManagementFragment extends Fragment {
                     String monthStr = inputMonth.getText().toString();
                     String dayStr = inputDay.getText().toString();
 
-                    if(yearStr.isEmpty() || monthStr.isEmpty() || dayStr.isEmpty()) {
+                    if (yearStr.isEmpty() || monthStr.isEmpty() || dayStr.isEmpty()) {
                         customToast(context, "请选择日期", R.layout.toast_view_e);
+                        return;
+                    }
+                    if (yearStr.length()<4 || monthStr.length()<2 || dayStr.length()<2) {
+                        customToast(context, "请输入正确的日期位数", R.layout.toast_view_e);
                         return;
                     }
 
@@ -344,6 +367,11 @@ public class ProductManagementFragment extends Fragment {
                     String yearStr = inputYear.getText().toString();
                     String monthStr = inputMonth.getText().toString();
                     String dayStr = inputDay.getText().toString();
+                    if (yearStr.isEmpty() || monthStr.isEmpty() || dayStr.isEmpty()) {
+                        customToast(context, "请选择日期", R.layout.toast_view_e);
+                        return;
+                    }
+
                     // 获取选中的 Customer 对象
                     CustomerInfoEntity selectedCustomer =
                             (CustomerInfoEntity) productCustomer.getSelectedItem();
@@ -452,6 +480,21 @@ public class ProductManagementFragment extends Fragment {
         // 获取对应组件
         Button buttonUpdate = dialogView.findViewById(R.id.update_btn_product);
         Button buttonDelete = dialogView.findViewById(R.id.delete_btn_product);
+        Button buttonAuth = dialogView.findViewById(R.id.auth_btn_product);
+
+        authInfoDao = new AuthInfoDao(context);
+        authInfoDao.open();
+        List<AuthInfoEntity> authInfoByProductId =
+                authInfoDao.getAuthInfoByProductId(productEntity.getId());
+        AuthInfoEntity authInfoEntity;
+        if (authInfoByProductId == null || authInfoByProductId.isEmpty()) {
+            authInfoEntity = null;
+            buttonAuth.setText("新增授权");
+        } else {
+            authInfoEntity = authInfoByProductId.get(0); // 如果有，应该只返回一个对象
+        }
+
+        authInfoDao.close();
 
         // 弹出操作对话框
         AlertDialog alertDialog = builder.create();
@@ -469,8 +512,8 @@ public class ProductManagementFragment extends Fragment {
             confirmBuilder.setMessage("确定删除该产品吗？")
                     .setPositiveButton("确定", (dialog, which) -> {
                         try {
-                            // TODO: 授权信息要一并删除
                             if (productInfoDao.deleteProduct(productEntity.getId()) > 0) {
+                                authInfoDao.deleteProductByProductId(productEntity.getId());
                                 reset("数据已删除", true);
                             } else {
                                 customToast(context, "删除失败", R.layout.toast_view_e);
@@ -482,10 +525,16 @@ public class ProductManagementFragment extends Fragment {
             confirmBuilder.create().show();
             alertDialog.dismiss();
         });
+
+        // 授权数据
+        buttonAuth.setOnClickListener(v -> {
+            showAuthInfoDialog(authInfoEntity, productEntity);
+            alertDialog.dismiss();
+        });
     }
 
     public void reset(String msg, Boolean showTest) {
-        if(!productEntityList.isEmpty())
+        if (!productEntityList.isEmpty())
             productEntityList.clear();
         productEntityList.addAll(productInfoDao.getAllProducts());
         productListAdapter.notifyDataSetChanged();
@@ -513,6 +562,325 @@ public class ProductManagementFragment extends Fragment {
                 }
             }
         };
+    }
+
+    //
+    private void showAuthInfoDialog(AuthInfoEntity authInfoEntity,
+                                    ProductEntity productEntity) {
+        // 授权信息对话框处理逻辑
+        Context context = requireContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.auth_info_operation_layout, null);
+        builder.setView(dialogView);
+
+        // 获取对应组件
+        TextView authCodeTextView = dialogView.findViewById(R.id.authCode_show);
+        TextView productIdTextView = dialogView.findViewById(R.id.product_id_show);
+        EditText inputYear = dialogView.findViewById(R.id.inputYear_auth);
+        EditText inputMonth = dialogView.findViewById(R.id.inputMonth_auth);
+        EditText inputDay = dialogView.findViewById(R.id.inputDay_auth);
+        Button buttonSubmit = dialogView.findViewById(R.id.buttonAddOrUpdate_auth);
+        Button buttonDelete = dialogView.findViewById(R.id.buttonDel_auth);
+
+        if (authInfoEntity != null) { // 更新操作初始化
+            authCodeTextView.setText(authInfoEntity.getAuthCode());
+            productIdTextView.setText(String.valueOf(authInfoEntity.getProductId()));
+
+            // 将 Date 转换为字符串
+            try {
+                String[] formattedDate = dateToStringArray(authInfoEntity.getExpireDate());
+                String year = formattedDate[0];  // 年
+                String month = formattedDate[1]; // 月
+                String day = formattedDate[2];   // 日
+
+                // 填充到输入框
+                inputYear.setText(year);
+                inputMonth.setText(month);
+                inputDay.setText(day);
+            } catch (Exception e) {
+                Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
+            }
+            buttonSubmit.setText("更新");
+        }else { // 新增操作初始化
+            authCodeTextView.setText("暂无");
+            productIdTextView.setText(String.valueOf(productEntity.getId()));
+            buttonSubmit.setText("新增");
+            buttonDelete.setVisibility(View.GONE);
+        }
+
+        // 弹出搜索对话框
+        AlertDialog dialogAuth = builder.create();
+        dialogAuth.show();
+
+        buttonSubmit.setOnClickListener(v -> {
+            if (authInfoEntity == null) { // 新增操作
+                try {
+                    String yearStr = inputYear.getText().toString();
+                    String monthStr = inputMonth.getText().toString();
+                    String dayStr = inputDay.getText().toString();
+                    if (yearStr.isEmpty() || monthStr.isEmpty() || dayStr.isEmpty()) {
+                        customToast(context, "请选择日期", R.layout.toast_view_e);
+                        return;
+                    }
+
+                    Date expireDate = createDateFromInput(yearStr, monthStr, dayStr);
+                    String authCodeStr = createAuthCode(context,
+                            productEntity.getCustomerId(),
+                            productEntity.getId(),
+                            dateToString(expireDate));
+                    // 创建新的产品对象
+                    AuthInfoEntity data = new AuthInfoEntity(
+                            createDateFromInput(yearStr, monthStr, dayStr),
+                            authCodeStr,
+                            productEntity.getId()
+
+                    );
+
+                    // 删除旧的授权信息
+                    authInfoDao.open();
+                    authInfoDao.deleteProductByProductId(productEntity.getId());
+                    Log.i("新增授权", "showAuthInfoDialog: " + data.getAuthCode());
+
+                    // 新增授权信息
+                    if (!data.getAuthCode().isEmpty()) {
+                        if (authInfoDao.addAuthInfo(data) > 0) {
+                            customToast(context, "数据已提交", R.layout.toast_view);
+                        } else {
+                            customToast(context, "新增授权信息失败", R.layout.toast_view_e);
+                        }
+                    } else {
+                        customToast(context, "新增授权信息失败，至少输入过期日期", R.layout.toast_view_e);
+                    }
+
+                    // 回显到页面
+                    AuthInfoEntity authInfoNew =
+                            authInfoDao.getAuthInfoByProductId(productEntity.getId()).get(0);
+                    authCodeTextView.setText(authInfoNew.getAuthCode());
+                    // 将 Date 转换为字符串
+                    try {
+                        String[] formattedDate = dateToStringArray(authInfoNew.getExpireDate());
+                        String year = formattedDate[0];  // 年
+                        String month = formattedDate[1]; // 月
+                        String day = formattedDate[2];   // 日
+
+                        // 填充到输入框
+                        inputYear.setText(year);
+                        inputMonth.setText(month);
+                        inputDay.setText(day);
+                    } catch (Exception e) {
+                        Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
+                    }
+                    buttonSubmit.setText("更新");
+                    buttonDelete.setVisibility(View.VISIBLE);
+                    authInfoDao.close();
+                    reset("授权已添加", true);
+                } catch (Exception e) {
+                    Log.e("新增授权失败", "showAuthInfoDialog: " + e.getMessage());
+                }
+
+            } else { // 更新操作
+                try {
+                    Log.i("更新授权", "showAuthInfoDialog: " + authInfoEntity.getId());
+                    String yearStr = inputYear.getText().toString();
+                    String monthStr = inputMonth.getText().toString();
+                    String dayStr = inputDay.getText().toString();
+                    if (yearStr.isEmpty() || monthStr.isEmpty() || dayStr.isEmpty()) {
+                        customToast(context, "请选择日期", R.layout.toast_view_e);
+                        return;
+                    }
+
+                    Date expireDate = createDateFromInput(yearStr, monthStr, dayStr);
+                    String authCodeStr = createAuthCode(context,
+                            productEntity.getCustomerId(),
+                            productEntity.getId(),
+                            dateToString(expireDate));
+
+                    // 更新授权
+                    authInfoEntity.setExpireDate(createDateFromInput(yearStr, monthStr, dayStr));
+                    authInfoEntity.setAuthCode(authCodeStr);
+                    authInfoDao.open();
+                    authInfoDao.updateAuthInfo(authInfoEntity);
+
+                    // 回显到页面
+                    AuthInfoEntity authInfoNew =
+                            authInfoDao.getAuthInfoByProductId(productEntity.getId()).get(0);
+                    authCodeTextView.setText(authInfoNew.getAuthCode());
+                    // 将 Date 转换为字符串
+                    try {
+                        String[] formattedDate = dateToStringArray(authInfoNew.getExpireDate());
+                        String year = formattedDate[0];  // 年
+                        String month = formattedDate[1]; // 月
+                        String day = formattedDate[2];   // 日
+
+                        // 填充到输入框
+                        inputYear.setText(year);
+                        inputMonth.setText(month);
+                        inputDay.setText(day);
+                    } catch (Exception e) {
+                        Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
+                    }
+                    buttonSubmit.setText("更新");
+                    buttonDelete.setVisibility(View.VISIBLE);
+                    authInfoDao.close();
+                    reset("授权已更新", true);
+                } catch (Exception e) {
+                    Log.e("更新授权失败", "showAuthInfoDialog: " + e.getMessage());
+                }
+            }
+        });
+
+        buttonDelete.setOnClickListener(v -> {
+            if (authInfoEntity != null) {
+                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
+                confirmBuilder.setMessage("确定删除该授权吗？")
+                        .setPositiveButton("确定", (dialog, which) -> {
+                            try {
+                                authInfoDao.open();
+                                authInfoDao.deleteAuthInfo(authInfoEntity.getId());
+                                authInfoDao.close();
+                                reset("数据已删除", true);
+                                dialog.dismiss();
+                            } catch (Exception e) {
+                                Log.e("删除授权失败", "showOperationDialog: " + e.getMessage());
+                            }
+                        }).setNegativeButton("取消", null);
+                confirmBuilder.create().show();
+                dialogAuth.dismiss();
+            }
+        });
+
+        // 年份监听
+        inputYear.addTextChangedListener(createTextWatcher(inputYear, 4, year -> {
+            // 月份不为空，则先清空输入的月
+            if (!inputMonth.getText().toString().isEmpty()) {
+                inputMonth.getText().clear();
+            }
+
+            if (year.length() == 4) {
+                int enteredYear = Integer.parseInt(year);
+                int currentYear = 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    currentYear = LocalDate.now().getYear();
+                }
+                if (enteredYear >= currentYear) {
+                    inputMonth.requestFocus();
+                } else {
+                    inputYear.getText().clear();
+                    customToast(context, "必须选择未来的日期", R.layout.toast_view_e);
+                }
+            }
+        }));
+
+        // 月份监听
+        inputMonth.addTextChangedListener(createTextWatcher(inputMonth, 2, month -> {
+            // 日期不为空，则先清空输入的日
+            if (!inputDay.getText().toString().isEmpty()) {
+                inputDay.getText().clear();
+            }
+
+            if (month.length() == 2) {
+                int enteredMonth = Integer.parseInt(month);
+                if (enteredMonth >= 1 && enteredMonth <= 12) {
+                    inputDay.requestFocus();
+                } else {
+                    inputMonth.getText().clear();
+                    customToast(context, "必须选择未来的日期", R.layout.toast_view_e);
+                }
+            }
+        }));
+
+        // 日期监听
+        inputDay.addTextChangedListener(createTextWatcher(inputDay, 2, day -> {
+            String yearStr = inputYear.getText().toString();
+            String monthStr = inputMonth.getText().toString();
+
+            if (yearStr.isEmpty() || monthStr.isEmpty()) {
+                inputDay.getText().clear();
+                customToast(context, "请选择年/月", R.layout.toast_view_e);
+                return;
+            }
+
+            if (day.length() == 2) {
+                int enteredDay = Integer.parseInt(day);
+                int year = Integer.parseInt(yearStr);
+                int month = Integer.parseInt(monthStr);
+                LocalDate enteredDate = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    enteredDate = LocalDate.of(year, month, 1);
+                }
+                int maxDay = 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    maxDay = enteredDate.lengthOfMonth();
+                }
+
+                if (enteredDay >= 1 && enteredDay <= maxDay) {
+                    LocalDate fullDate = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        fullDate = LocalDate.of(year, month, enteredDay);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (fullDate.isAfter(LocalDate.now())) {
+                            customToast(context, "日期已选择: "
+                                    + fullDate, R.layout.toast_view);
+                        } else {
+                            inputDay.getText().clear();
+                            customToast(context,
+                                    "必须选择未来的日期", R.layout.toast_view_e);
+                        }
+                    }
+                } else {
+                    inputDay.getText().clear();
+                    customToast(context,
+                            "请输入合法的日期", R.layout.toast_view_e);
+                }
+            }
+        }));
+
+    }
+
+    private String createAuthCode(Context context,
+                                  long customerId,
+                                  long productId,
+                                  String dateStr) {
+        // 生成授权码 工程师id-客户id-产品id-时间戳-随机数-过期时间
+        String authCodeStr = "";
+        // 获取SharedPreferences对象以得到工程师id
+        SharedPreferences sharedPreferences = context.getSharedPreferences("ENGINEERHELPER_saved_account", Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("cur_id")) {
+            authCodeStr += sharedPreferences.getLong("cur_id", -1);
+            authCodeStr += "-";
+        } else {
+            customToast(context, "获取工程师id失败", R.layout.toast_view_e);
+            return "";
+        }
+        // 获取客户id
+        if (customerId > 0) {
+            authCodeStr += customerId;
+            authCodeStr += "-";
+        } else {
+            customToast(context, "获取客户id失败", R.layout.toast_view_e);
+            return "";
+        }
+        // 获取产品id
+        if (productId > 0) {
+            authCodeStr += productId;
+            authCodeStr += "_";
+        } else {
+            customToast(context, "获取产品id失败", R.layout.toast_view_e);
+            return "";
+        }
+        // 获取当前时间戳
+        long timestamp = System.currentTimeMillis();
+        authCodeStr += timestamp;
+        authCodeStr += "_";
+        // 生成随机数
+        Random random = new Random();
+        int randomNumber = random.nextInt(100000); // 生成0到99999之间的随机数
+        authCodeStr += randomNumber;
+        authCodeStr += "_";
+        authCodeStr += dateStr;
+        return authCodeStr;
     }
 
     @FunctionalInterface

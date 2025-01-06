@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5sp">
+
+    <Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/general_background"
+        android:subtitle="新增/修改/删除"
+        android:subtitleTextColor="@color/white"
+        android:title="授权信息管理"
+        android:titleTextColor="@color/white" />
+
+    <ImageView
+        android:id="@+id/imageUrl"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/ic_auth_code" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="基本信息"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:text="授权码"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/authCode_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:text="暂无"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:text="所属产品ID"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/product_id_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:text="product_id"
+        android:textSize="17dp" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:text="过期时间"
+        android:textSize="20dp" />
+
+    <!-- 年输入框 -->
+    <EditText
+        android:id="@+id/inputYear_auth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_background"
+        android:gravity="center"
+        android:hint="年 (YYYY)"
+        android:inputType="number"
+        android:maxLength="4"
+        android:paddingBottom="5sp"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="15dp"
+        android:text="年"
+        android:textSize="17dp" />
+
+    <!-- 月输入框 -->
+    <EditText
+        android:id="@+id/inputMonth_auth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_background"
+        android:gravity="center"
+        android:hint="月 (MM)"
+        android:inputType="number"
+        android:maxLength="2"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="15dp"
+        android:text="月"
+        android:textSize="17dp" />
+
+    <!-- 日输入框 -->
+    <EditText
+        android:id="@+id/inputDay_auth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_background"
+        android:gravity="center"
+        android:hint="日 (DD)"
+        android:inputType="number"
+        android:maxLength="2"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="15dp"
+        android:text="日"
+        android:textSize="17dp" />
+
+    <!-- 下方水平排列的按钮 -->
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonAddOrUpdate_auth"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/general_background_green"
+            android:text="提交"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/buttonDel_auth"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/general_background_red"
+            android:text="删除"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>
+

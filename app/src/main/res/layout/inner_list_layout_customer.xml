@@ -7,8 +7,8 @@
     <ImageView
         android:id="@+id/imageUrl_inner_customer"
         android:src="@drawable/ic_customer_orange"
-        android:layout_width="100dp"
-        android:layout_height="80dp"/>
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
 
     <TextView
         android:id="@+id/inner_customer_id"

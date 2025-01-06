@@ -5,10 +5,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="14dp"
-        android:paddingBottom="14dp"
-        android:paddingEnd="14dp"
-        android:paddingTop="14dp">
+        android:padding="5sp">
 
         <Toolbar
             android:layout_width="match_parent"

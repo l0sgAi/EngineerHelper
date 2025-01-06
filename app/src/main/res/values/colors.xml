@@ -11,4 +11,8 @@
     <color name="darkerGrey">#282828</color>
     <color name="orange">#FF9800</color>
     <color name="oranger">#FF5722</color>
+    <color name="green">#4CAF50</color>
+    <color name="light_green">#87F202</color>
+    <color name="red">#F60053</color>
+    <color name="light_red">#F6837A</color>
 </resources>
