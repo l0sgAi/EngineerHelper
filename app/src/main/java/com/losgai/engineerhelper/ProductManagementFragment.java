@@ -1,6 +1,7 @@
 package com.losgai.engineerhelper;
 
 import static com.losgai.engineerhelper.helper.DateUtil.createDateFromInput;
+import static com.losgai.engineerhelper.helper.DateUtil.dateIsPast;
 import static com.losgai.engineerhelper.helper.DateUtil.dateToString;
 import static com.losgai.engineerhelper.helper.DateUtil.dateToStringArray;
 import static com.losgai.engineerhelper.helper.GeneralHelper.customToast;
@@ -208,11 +209,6 @@ public class ProductManagementFragment extends Fragment {
 
         // 年份监听
         inputYear.addTextChangedListener(createTextWatcher(inputYear, 4, year -> {
-            // 月份不为空，则先清空输入的月
-            if (!inputMonth.getText().toString().isEmpty()) {
-                inputMonth.getText().clear();
-            }
-
             if (year.length() == 4) {
                 int enteredYear = Integer.parseInt(year);
                 int currentYear = 0;
@@ -230,11 +226,6 @@ public class ProductManagementFragment extends Fragment {
 
         // 月份监听
         inputMonth.addTextChangedListener(createTextWatcher(inputMonth, 2, month -> {
-            // 日期不为空，则先清空输入的日
-            if (!inputDay.getText().toString().isEmpty()) {
-                inputDay.getText().clear();
-            }
-
             if (month.length() == 2) {
                 int enteredMonth = Integer.parseInt(month);
                 if (enteredMonth >= 1 && enteredMonth <= 12) {
@@ -271,19 +262,11 @@ public class ProductManagementFragment extends Fragment {
                 }
 
                 if (enteredDay >= 1 && enteredDay <= maxDay) {
-                    LocalDate fullDate = null;
+                    LocalDate fullDate;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         fullDate = LocalDate.of(year, month, enteredDay);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (fullDate.isBefore(LocalDate.now())) {
-                            customToast(context, "日期已选择: "
-                                    + fullDate, R.layout.toast_view);
-                        } else {
-                            inputDay.getText().clear();
-                            customToast(context,
-                                    "必须选择之前的日期", R.layout.toast_view_e);
-                        }
+                        customToast(context, "日期已选择: "
+                                + fullDate, R.layout.toast_view);
                     }
                 } else {
                     inputDay.getText().clear();
@@ -304,10 +287,6 @@ public class ProductManagementFragment extends Fragment {
                         customToast(context, "请选择日期", R.layout.toast_view_e);
                         return;
                     }
-                    if (yearStr.length()<4 || monthStr.length()<2 || dayStr.length()<2) {
-                        customToast(context, "请输入正确的日期位数", R.layout.toast_view_e);
-                        return;
-                    }
 
                     // 获取选中的 Customer 对象
                     CustomerInfoEntity selectedCustomer =
@@ -324,7 +303,6 @@ public class ProductManagementFragment extends Fragment {
                         customToast(context, "请选择客户", R.layout.toast_view_e);
                         return;
                     }
-
 
                     // 创建新的产品对象
                     ProductEntity data = new ProductEntity(
@@ -343,6 +321,10 @@ public class ProductManagementFragment extends Fragment {
                     Log.i("新增产品", "showAddOrUpdateDialog: " + data.getProductName());
 
                     // 新增产品
+                    if (!dateIsPast(yearStr, monthStr, dayStr)) {
+                        customToast(context, "请输入以前的日期", R.layout.toast_view_e);
+                        return;
+                    }
                     if (!data.getProductName().isEmpty()) {
                         if (productInfoDao.addProduct(data) > 0) {
                             productEntityList.clear();
@@ -389,6 +371,10 @@ public class ProductManagementFragment extends Fragment {
                     }
 
                     // 更新产品
+                    if (!dateIsPast(yearStr, monthStr, dayStr)) {
+                        customToast(context, "请输入以前的日期", R.layout.toast_view_e);
+                        return;
+                    }
                     if (!productName.getText().toString().isEmpty()) {
                         productEntity.setProductName(productName.getText().toString());
 
@@ -396,7 +382,7 @@ public class ProductManagementFragment extends Fragment {
                         productEntity.setCustomerId(selectedCustomerId);
 
                         productInfoDao.updateProduct(productEntity);
-                        reset("数据已更新", true);
+                        customToast(context, "产品信息已更新", R.layout.toast_view);
                         dialog.dismiss();
                     } else {
                         customToast(context, "请填写完整信息", R.layout.toast_view_e);
@@ -602,7 +588,7 @@ public class ProductManagementFragment extends Fragment {
                 Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
             }
             buttonSubmit.setText("更新");
-        }else { // 新增操作初始化
+        } else { // 新增操作初始化
             authCodeTextView.setText("暂无");
             productIdTextView.setText(String.valueOf(productEntity.getId()));
             buttonSubmit.setText("新增");
@@ -643,6 +629,10 @@ public class ProductManagementFragment extends Fragment {
                     Log.i("新增授权", "showAuthInfoDialog: " + data.getAuthCode());
 
                     // 新增授权信息
+                    if (dateIsPast(yearStr, monthStr, dayStr)) {
+                        customToast(context, "授权已过期，无法添加", R.layout.toast_view_e);
+                        return;
+                    }
                     if (!data.getAuthCode().isEmpty()) {
                         if (authInfoDao.addAuthInfo(data) > 0) {
                             customToast(context, "数据已提交", R.layout.toast_view);
@@ -672,13 +662,12 @@ public class ProductManagementFragment extends Fragment {
                         Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
                     }
                     buttonSubmit.setText("更新");
+                    // TODO: 重新赋值authInfoEntity
                     buttonDelete.setVisibility(View.VISIBLE);
                     authInfoDao.close();
-                    reset("授权已添加", true);
                 } catch (Exception e) {
                     Log.e("新增授权失败", "showAuthInfoDialog: " + e.getMessage());
                 }
-
             } else { // 更新操作
                 try {
                     Log.i("更新授权", "showAuthInfoDialog: " + authInfoEntity.getId());
@@ -697,6 +686,10 @@ public class ProductManagementFragment extends Fragment {
                             dateToString(expireDate));
 
                     // 更新授权
+                    if (dateIsPast(yearStr, monthStr, dayStr)) {
+                        customToast(context, "授权已过期，无法更新", R.layout.toast_view_e);
+                        return;
+                    }
                     authInfoEntity.setExpireDate(createDateFromInput(yearStr, monthStr, dayStr));
                     authInfoEntity.setAuthCode(authCodeStr);
                     authInfoDao.open();
@@ -722,8 +715,8 @@ public class ProductManagementFragment extends Fragment {
                     }
                     buttonSubmit.setText("更新");
                     buttonDelete.setVisibility(View.VISIBLE);
+                    customToast(context, "授权已更新", R.layout.toast_view);
                     authInfoDao.close();
-                    reset("授权已更新", true);
                 } catch (Exception e) {
                     Log.e("更新授权失败", "showAuthInfoDialog: " + e.getMessage());
                 }
@@ -752,11 +745,6 @@ public class ProductManagementFragment extends Fragment {
 
         // 年份监听
         inputYear.addTextChangedListener(createTextWatcher(inputYear, 4, year -> {
-            // 月份不为空，则先清空输入的月
-            if (!inputMonth.getText().toString().isEmpty()) {
-                inputMonth.getText().clear();
-            }
-
             if (year.length() == 4) {
                 int enteredYear = Integer.parseInt(year);
                 int currentYear = 0;
@@ -774,11 +762,6 @@ public class ProductManagementFragment extends Fragment {
 
         // 月份监听
         inputMonth.addTextChangedListener(createTextWatcher(inputMonth, 2, month -> {
-            // 日期不为空，则先清空输入的日
-            if (!inputDay.getText().toString().isEmpty()) {
-                inputDay.getText().clear();
-            }
-
             if (month.length() == 2) {
                 int enteredMonth = Integer.parseInt(month);
                 if (enteredMonth >= 1 && enteredMonth <= 12) {
@@ -815,19 +798,11 @@ public class ProductManagementFragment extends Fragment {
                 }
 
                 if (enteredDay >= 1 && enteredDay <= maxDay) {
-                    LocalDate fullDate = null;
+                    LocalDate fullDate;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         fullDate = LocalDate.of(year, month, enteredDay);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (fullDate.isAfter(LocalDate.now())) {
-                            customToast(context, "日期已选择: "
-                                    + fullDate, R.layout.toast_view);
-                        } else {
-                            inputDay.getText().clear();
-                            customToast(context,
-                                    "必须选择未来的日期", R.layout.toast_view_e);
-                        }
+                        customToast(context, "日期已选择: "
+                                + fullDate, R.layout.toast_view);
                     }
                 } else {
                     inputDay.getText().clear();

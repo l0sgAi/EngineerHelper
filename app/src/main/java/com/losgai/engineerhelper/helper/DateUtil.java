@@ -4,6 +4,8 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
@@ -54,5 +56,22 @@ public class DateUtil {
         // 格式化 Date 为 "yyyy-MM-dd"
         SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         return isoDateFormat.format(date);
+    }
+
+    /**
+     * 判断年月日封装的Date数据在现在还是未来
+     *
+     * @param year  年字符串（如 "2023"）
+     * @param month 月字符串（如 "12"）
+     * @param day   日字符串（如 "30"）
+     * @return boolean true: 过去 false: 未来
+     */
+    public static boolean dateIsPast(String year, String month, String day) throws ParseException {
+        // 将输入的年月日解析为 LocalDate
+        LocalDate inputDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+        // 获取指定时区的当前日期
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Shanghai"));
+        // 比较输入日期和当前日期
+        return inputDate.isBefore(currentDate);
     }
 }
