@@ -662,7 +662,6 @@ public class ProductManagementFragment extends Fragment {
                         Log.e("日期转换失败", Objects.requireNonNull(e.getMessage()));
                     }
                     buttonSubmit.setText("更新");
-                    // TODO: 重新赋值authInfoEntity
                     buttonDelete.setVisibility(View.VISIBLE);
                     authInfoDao.close();
                 } catch (Exception e) {
@@ -724,23 +723,21 @@ public class ProductManagementFragment extends Fragment {
         });
 
         buttonDelete.setOnClickListener(v -> {
-            if (authInfoEntity != null) {
-                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
-                confirmBuilder.setMessage("确定删除该授权吗？")
-                        .setPositiveButton("确定", (dialog, which) -> {
-                            try {
-                                authInfoDao.open();
-                                authInfoDao.deleteAuthInfo(authInfoEntity.getId());
-                                authInfoDao.close();
-                                reset("数据已删除", true);
-                                dialog.dismiss();
-                            } catch (Exception e) {
-                                Log.e("删除授权失败", "showOperationDialog: " + e.getMessage());
-                            }
-                        }).setNegativeButton("取消", null);
-                confirmBuilder.create().show();
-                dialogAuth.dismiss();
-            }
+            AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
+            confirmBuilder.setMessage("确定删除该授权吗？")
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        try {
+                            authInfoDao.open();
+                            authInfoDao.deleteProductByProductId(productEntity.getId());
+                            authInfoDao.close();
+                            reset("数据已删除", true);
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            Log.e("删除授权失败", "showOperationDialog: " + e.getMessage());
+                        }
+                    }).setNegativeButton("取消", null);
+            confirmBuilder.create().show();
+            dialogAuth.dismiss();
         });
 
         // 年份监听
