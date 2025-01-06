@@ -3,6 +3,8 @@ package com.losgai.engineerhelper;
 import static com.losgai.engineerhelper.helper.GeneralHelper.customToast;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -304,7 +306,8 @@ public class CustomerManagementFragment extends Fragment {
         });
 
         buttonNavigate.setOnClickListener(v -> {
-            // TODO: 导航至客户地址
+            // 导航至客户地址
+            openGaodeMap(customerInfoEntity.getAddress());
             alertDialog.dismiss();
         });
 
@@ -318,6 +321,25 @@ public class CustomerManagementFragment extends Fragment {
         customerAdapter.notifyDataSetChanged();
         if (showToast)
             customToast(requireContext(), msg, R.layout.toast_view);
+    }
+
+    private void openGaodeMap(String address) { // 传入目的地，打开高德地图导航
+        Context context = requireContext();
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+
+            // 构建高德地图 URL Scheme，直接搜索地点
+            Uri uri = Uri.parse("androidamap://poi?sourceApplication=MyApp&keywords=" + Uri.encode(address));
+            intent.setData(uri);
+
+            //启动页面
+            startActivity(intent);
+        } catch (Exception e) {
+            customToast(context, "启动地图失败，可能是未安装高德地图", R.layout.toast_view_e);
+            Log.e("打开地图失败", "openGaodeMap " + e.getMessage());
+        }
     }
 
 }
