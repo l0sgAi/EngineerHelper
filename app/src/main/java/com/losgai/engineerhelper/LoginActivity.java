@@ -49,13 +49,20 @@ public class LoginActivity extends AppCompatActivity {
         Switch isSave = findViewById(R.id.saveAccount); // 是否记住用户名/密码按钮
 
         // 填入保存的用户名/密码
-        if(sharedPreferences.contains("cur_username")){
+        if (sharedPreferences.contains("cur_username")) {
             usernameEditText.setText(sharedPreferences.getString("cur_username", ""));
             isSave.setChecked(true);
+        } else {
+            usernameEditText.setText("");
+            isSave.setChecked(false);
         }
-        if(sharedPreferences.contains("cur_password")){
+
+        if (sharedPreferences.contains("cur_password")) {
             passwordEditText.setText(sharedPreferences.getString("cur_password", ""));
             isSave.setChecked(true);
+        } else {
+            passwordEditText.setText("");
+            isSave.setChecked(false);
         }
 
         // 设置监听器
@@ -75,10 +82,12 @@ public class LoginActivity extends AppCompatActivity {
                     // 对比密文，密码正确，跳转
                     customToast(this, userName + " 登录成功", R.layout.toast_view);
 
-                    if (isSave.isChecked()) {
-                        // 记住用户名/密码
+                    if (isSave.isChecked()) { // 记住用户名/密码
                         editor.putString("cur_username", userName);
                         editor.putString("cur_password", passwordNoEncrypted);
+                    } else { // 不记住用户名密码
+                        editor.remove("cur_username");
+                        editor.remove("cur_password");
                     }
 
                     editor.putLong("cur_id", id); // 保存当前登录的id

@@ -59,9 +59,10 @@ public class PersonalCenterFragment extends Fragment {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             if (isSave.isChecked()) {
                                 // 记住用户名/密码
-                                editor.putString("cur_username", newPasswordStr);
-                                editor.putString("cur_password", newPasswordAffirmStr);
-                            } else { // 清除原来保存的密码
+                                editor.putString("cur_username", curUsername);
+                                editor.putString("cur_password", newPasswordStr);
+                            } else { // 清除原来保存的用户名密码
+                                editor.remove("cur_username");
                                 editor.remove("cur_password");
                             }
                             editor.apply();
