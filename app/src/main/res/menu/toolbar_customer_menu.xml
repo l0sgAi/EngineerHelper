@@ -5,18 +5,24 @@
         android:id="@+id/menu_customer_add"
         android:icon="@drawable/add"
         android:title="新增"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_customer_addFromExcel"
+        android:icon="@drawable/excel"
+        android:title="从Excel新增"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_customer_search"
         android:icon="@drawable/search"
         android:title="查询"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_customer_refresh"
         android:icon="@drawable/refresh"
         android:title="刷新"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
 </menu>

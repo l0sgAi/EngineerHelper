@@ -31,6 +31,14 @@ import com.losgai.engineerhelper.dao.CustomerInfoDao;
 import com.losgai.engineerhelper.dao.ProductInfoDao;
 import com.losgai.engineerhelper.entity.CustomerInfoEntity;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +52,8 @@ public class CustomerManagementFragment extends Fragment {
     private ListView customerListView; // 客户信息列表视图
     private CustomerAdapter customerAdapter; // 客户信息适配器
     private List<CustomerInfoEntity> customerList; // 客户信息列表
+
+    private static final int PICK_XLS_FILE_REQUEST_CODE = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +117,10 @@ public class CustomerManagementFragment extends Fragment {
                 } else if (menuItem.getItemId() == R.id.menu_customer_search) {
                     // 条件查询客户信息
                     query(customerAdapter);
+                    return true;
+                } else if (menuItem.getItemId() == R.id.menu_customer_addFromExcel) {
+                    // 从Excel导入客户信息
+                    ImportCustomerInfoFromExcel();
                     return true;
                 } else if (menuItem.getItemId() == R.id.menu_customer_refresh) {
                     reset("客户数据已刷新", true);
@@ -214,6 +228,97 @@ public class CustomerManagementFragment extends Fragment {
         });
     }
 
+    // 打开文件选择器
+    // 选择文件后，调用导入方法
+    private void ImportCustomerInfoFromExcel() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/vnd.ms-excel"); // 限制文件类型为 .xls
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "选择 Excel 文件"), PICK_XLS_FILE_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_XLS_FILE_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null) {
+            Uri uri = data.getData(); // 获取文件的 Uri
+            if (uri != null) {
+                try {
+                    // 读取 Excel 文件
+                    InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+                    importExcelToDatabase(inputStream); // 将 Excel 数据导入数据库
+                } catch (Exception e) {
+                    Log.e("Excel导入失败", e.getMessage());
+                    customToast(requireContext(), "导入失败，请检查文件格式！", R.layout.toast_view_e);
+                }
+            }
+        }
+    }
+
+    private void importExcelToDatabase(InputStream inputStream) {
+        try {
+            // 使用 Apache POI 解析 Excel 文件
+            Workbook workbook = new HSSFWorkbook(inputStream); // 如果是 .xlsx 文件，使用 XSSFWorkbook
+            Sheet sheet = workbook.getSheetAt(0); // 获取第一个工作表
+
+            // 遍历每一行数据
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    // 获取每列数据
+                    String customerName = getCellValueAsString(row.getCell(0)); // 第一列
+                    String address = getCellValueAsString(row.getCell(1));     // 第二列
+                    String phone = getCellValueAsString(row.getCell(2));       // 第三列
+                    String email = getCellValueAsString(row.getCell(3));       // 第四列
+                    // 创建 CustomerInfoEntity 对象
+                    CustomerInfoEntity customer = new CustomerInfoEntity(customerName, address, phone, email);
+
+                    // 插入到数据库
+                    customerInfoDao.addCustomer(customer);
+                }
+            }
+
+            // 刷新列表
+            reset("数据导入成功", true);
+        } catch (Exception e) {
+            Log.e("Excel解析错误", e.getMessage());
+            customToast(requireContext(), "Excel解析失败，请检查文件内容！", R.layout.toast_view_e);
+        }
+    }
+
+    public String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return ""; // 空单元格返回空字符串
+        }
+
+        // 根据单元格的类型获取值
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue(); // 直接返回字符串
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    // 如果是日期类型单元格，格式化为日期字符串
+                    return cell.getDateCellValue().toString();
+                } else {
+                    // 将数字转为字符串
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                // 如果是公式，计算后取值
+                try {
+                    return cell.getStringCellValue();
+                } catch (IllegalStateException e) {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            case BLANK:
+                return ""; // 空单元格返回空字符串
+            default:
+                return "未知类型";
+        }
+    }
+
     // 查询操作，包括弹出对话框和查询逻辑
     private void query(CustomerAdapter customerAdapter) {
         Context context = requireContext();
@@ -315,7 +420,7 @@ public class CustomerManagementFragment extends Fragment {
 
     // 刷新页面列表数据的方法
     private void reset(String msg, Boolean showToast) {
-        if(!customerList.isEmpty())
+        if (!customerList.isEmpty())
             customerList.clear();
         customerList.addAll(customerInfoDao.getAllCustomers());
         customerAdapter.notifyDataSetChanged();
