@@ -301,7 +301,7 @@ public class CustomerManagementFragment extends Fragment {
                     return cell.getDateCellValue().toString();
                 } else {
                     // 将数字转为字符串
-                    return String.valueOf(cell.getNumericCellValue());
+                    return String.valueOf((long) cell.getNumericCellValue());
                 }
             case BOOLEAN:
                 return String.valueOf(cell.getBooleanCellValue());
