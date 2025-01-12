@@ -69,6 +69,10 @@ public class ProductManagementFragment extends Fragment {
             productInfoDao.open();
             productEntityList = productInfoDao.getAllProducts();
 
+            // 获取授权信息数据访问对象
+            authInfoDao = new AuthInfoDao((getContext()));
+            authInfoDao.open();
+
             if (productEntityList == null) {
                 productEntityList = new ArrayList<>(); // 避免后续操作空指针
             }
@@ -160,7 +164,6 @@ public class ProductManagementFragment extends Fragment {
         customerInfoDao = new CustomerInfoDao(context);
         customerInfoDao.open();
         List<CustomerInfoEntity> customerInfoEntityList = customerInfoDao.getAllCustomers();
-        customerInfoDao.close();
         CustomerAdapter customerAdapter = new CustomerAdapter(context, R.layout.inner_list_layout_customer, customerInfoEntityList);
 
         // 设置下拉列表样式
@@ -316,7 +319,6 @@ public class ProductManagementFragment extends Fragment {
                         customToast(context, "客户不存在，请先添加客户", R.layout.toast_view_e);
                         return;
                     }
-                    customerInfoDao.close();
 
                     Log.i("新增产品", "showAddOrUpdateDialog: " + data.getProductName());
 
@@ -329,11 +331,11 @@ public class ProductManagementFragment extends Fragment {
                         if (productInfoDao.addProduct(data) > 0) {
                             productEntityList.clear();
                             productEntityList.addAll(productInfoDao.getAllProducts());
-                            customToast(context, "数据已提交", R.layout.toast_view);
                         } else {
                             customToast(context, "新增产品失败", R.layout.toast_view_e);
                         }
                         productListAdapter.notifyDataSetChanged();
+                        reset("新增产品成功", true);
                         dialog.dismiss();
                     } else {
                         customToast(context, "新增产品失败，至少输入产品的名称！", R.layout.toast_view_e);
@@ -382,7 +384,7 @@ public class ProductManagementFragment extends Fragment {
                         productEntity.setCustomerId(selectedCustomerId);
 
                         productInfoDao.updateProduct(productEntity);
-                        customToast(context, "产品信息已更新", R.layout.toast_view);
+                        reset("数据已更新", true);
                         dialog.dismiss();
                     } else {
                         customToast(context, "请填写完整信息", R.layout.toast_view_e);
@@ -410,7 +412,6 @@ public class ProductManagementFragment extends Fragment {
         customerInfoDao = new CustomerInfoDao(context);
         customerInfoDao.open();
         List<CustomerInfoEntity> customerInfoEntityList = customerInfoDao.getAllCustomers();
-        customerInfoDao.close();
         CustomerAdapter customerAdapter = new CustomerAdapter(context, R.layout.inner_list_layout_customer, customerInfoEntityList);
 
         // 设置下拉列表样式
@@ -468,8 +469,6 @@ public class ProductManagementFragment extends Fragment {
         Button buttonDelete = dialogView.findViewById(R.id.delete_btn_product);
         Button buttonAuth = dialogView.findViewById(R.id.auth_btn_product);
 
-        authInfoDao = new AuthInfoDao(context);
-        authInfoDao.open();
         List<AuthInfoEntity> authInfoByProductId =
                 authInfoDao.getAuthInfoByProductId(productEntity.getId());
         AuthInfoEntity authInfoEntity;
@@ -480,7 +479,6 @@ public class ProductManagementFragment extends Fragment {
             authInfoEntity = authInfoByProductId.get(0); // 如果有，应该只返回一个对象
         }
 
-        authInfoDao.close();
 
         // 弹出操作对话框
         AlertDialog alertDialog = builder.create();
@@ -498,13 +496,11 @@ public class ProductManagementFragment extends Fragment {
             confirmBuilder.setMessage("确定删除该产品吗？")
                     .setPositiveButton("确定", (dialog, which) -> {
                         try {
-                            if (productInfoDao.deleteProduct(productEntity.getId()) > 0) {
-                                authInfoDao.deleteProductByProductId(productEntity.getId());
-                                reset("数据已删除", true);
-                            } else {
-                                customToast(context, "删除失败", R.layout.toast_view_e);
-                            }
+                            productInfoDao.deleteProduct(productEntity.getId());
+                            authInfoDao.deleteProductByProductId(productEntity.getId());
+                            reset("数据已删除", true);
                         } catch (Exception e) {
+                            customToast(context, "删除失败", R.layout.toast_view_e);
                             Log.e("删除产品失败", "showOperationDialog: " + e.getMessage());
                         }
                     }).setNegativeButton("取消", null);
@@ -520,8 +516,7 @@ public class ProductManagementFragment extends Fragment {
     }
 
     public void reset(String msg, Boolean showTest) {
-        if (!productEntityList.isEmpty())
-            productEntityList.clear();
+        productEntityList.clear();
         productEntityList.addAll(productInfoDao.getAllProducts());
         productListAdapter.notifyDataSetChanged();
         if (showTest) {
@@ -663,7 +658,6 @@ public class ProductManagementFragment extends Fragment {
                     }
                     buttonSubmit.setText("更新");
                     buttonDelete.setVisibility(View.VISIBLE);
-                    authInfoDao.close();
                 } catch (Exception e) {
                     Log.e("新增授权失败", "showAuthInfoDialog: " + e.getMessage());
                 }
@@ -715,7 +709,6 @@ public class ProductManagementFragment extends Fragment {
                     buttonSubmit.setText("更新");
                     buttonDelete.setVisibility(View.VISIBLE);
                     customToast(context, "授权已更新", R.layout.toast_view);
-                    authInfoDao.close();
                 } catch (Exception e) {
                     Log.e("更新授权失败", "showAuthInfoDialog: " + e.getMessage());
                 }
@@ -729,7 +722,6 @@ public class ProductManagementFragment extends Fragment {
                         try {
                             authInfoDao.open();
                             authInfoDao.deleteProductByProductId(productEntity.getId());
-                            authInfoDao.close();
                             reset("数据已删除", true);
                             dialog.dismiss();
                         } catch (Exception e) {
