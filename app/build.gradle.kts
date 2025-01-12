@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.material)
+    implementation("org.apache.poi:poi:5.2.4")
+    implementation ("net.sourceforge.jexcelapi:jxl:2.6.12")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
