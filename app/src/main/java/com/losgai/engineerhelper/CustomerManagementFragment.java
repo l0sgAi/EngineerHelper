@@ -290,13 +290,14 @@ public class CustomerManagementFragment extends Fragment {
                     .setPositiveButton("确认", (dialog, which) -> {
                         try {
                             // 用户点击确认后，执行删除操作
-                            if (customerInfoDao.deleteCustomer(customerInfoEntity.getId()) > 0 &&
-                                    productInfoDao.deleteProductByCustomerId(customerInfoEntity.getId()) > 0) {
-                                reset("数据已删除", true);
-                            } else {
-                                customToast(context, "删除数据失败", R.layout.toast_view_e);
-                            }
+                            customerInfoDao.open();
+                            productInfoDao.open();
+                            customerInfoDao.deleteCustomer(customerInfoEntity.getId());
+                            productInfoDao.deleteProductByCustomerId(customerInfoEntity.getId());
+                            // 刷新页面列表数据
+                            reset("数据已删除", true);
                         } catch (Exception e) {
+                            customToast(context, "删除数据失败", R.layout.toast_view_e);
                             Log.e("删除数据失败", "showOperationDialog " + e.getMessage());
                         }
                     }).setNegativeButton("取消", null); // 用户点击取消，不做任何操作
@@ -315,8 +316,7 @@ public class CustomerManagementFragment extends Fragment {
 
     // 刷新页面列表数据的方法
     private void reset(String msg, Boolean showToast) {
-        if(!customerList.isEmpty())
-            customerList.clear();
+        customerList.clear();
         customerList.addAll(customerInfoDao.getAllCustomers());
         customerAdapter.notifyDataSetChanged();
         if (showToast)
